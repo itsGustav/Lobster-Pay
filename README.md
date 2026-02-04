@@ -1,10 +1,31 @@
 # 🦞 USDC Agent Skill
 
-> Complete USDC payment infrastructure for Clawdbot via Circle's Programmable Wallets API.
+> Complete USDC payment infrastructure for OpenClaw via Circle's Programmable Wallets API.
 
 **Built for the Circle USDC Hackathon 2026** 🏆
 
+## ✨ Highlights
+
+- **x402 Payment Protocol** — HTTP-native micropayments for AI agents
+- **Escrow as a Service** — Pre-built templates for any industry
+- **Agent-to-Agent Commerce** — Autonomous payments between bots
+- **Multi-Chain Support** — Ethereum, Polygon, Avalanche, Arbitrum
+
 ## Features
+
+### 🔐 x402 Payment Protocol (NEW)
+- 💳 **HTTP-Native Payments** — `402 Payment Required` → automatic USDC payment
+- 🤖 **Agent Commerce** — Bots pay bots for API calls, data, services
+- 🧾 **Payment Receipts** — On-chain proof of payment
+- 🔄 **Automatic Retry** — Handle payment challenges seamlessly
+- 📊 **Usage Tracking** — Track spend by endpoint, recipient, time
+
+### 🏦 Escrow as a Service (NEW)
+- 🏠 **Real Estate** — Earnest money, security deposits, rent
+- 💼 **Freelance** — Milestone payments, hourly billing
+- 🛒 **Commerce** — Buyer protection, marketplace escrow
+- 🤝 **P2P** — Peer-to-peer trades with trusted release
+- ⚙️ **Custom** — Build your own with condition DSL
 
 ### Core Wallet Operations
 - 💰 **Check USDC balances** across multiple chains
@@ -106,11 +127,16 @@ npx ts-node scripts/usdc-cli.ts bridge 100 from ETH-SEPOLIA to AVAX-FUJI
 
 ```
 usdc-agent/
-├── SKILL.md                 # Clawdbot skill documentation
+├── SKILL.md                 # OpenClaw skill documentation
 ├── README.md                # This file
 ├── package.json             # Dependencies
 ├── lib/
 │   ├── circle-client.ts     # Circle Programmable Wallets API client
+│   ├── x402-client.ts       # x402 payment protocol client
+│   ├── x402-server.ts       # x402 payment verification middleware
+│   ├── escrow.ts            # Escrow management & multi-party release
+│   ├── escrow-templates.ts  # Pre-built escrow templates
+│   ├── condition-builder.ts # Flexible condition DSL
 │   ├── invoices.ts          # Invoice & recurring payment management
 │   ├── contacts.ts          # Address book & contact resolution
 │   ├── approvals.ts         # Multi-sig style approval workflows
@@ -118,9 +144,15 @@ usdc-agent/
 │   └── analytics.ts         # Transaction analytics & reporting
 ├── scripts/
 │   └── usdc-cli.ts          # CLI tool for testing
-├── data/                    # Local data storage (created at runtime)
-└── references/
-    └── testnet-info.md      # Testnet contracts & faucets
+├── docs/
+│   ├── x402-integration.md  # x402 protocol documentation
+│   ├── x402-quickstart.md   # Quick start guide
+│   ├── escrow-templates.md  # Escrow template reference
+│   └── ARCHITECTURE.md      # Technical architecture
+├── examples/
+│   ├── x402-client-example.ts
+│   └── x402-server-example.ts
+└── data/                    # Local data storage (created at runtime)
 ```
 
 ## Supported Networks (Testnet)
@@ -236,6 +268,65 @@ const pending = await approvals.submitForApproval({
 
 // Approve
 await approvals.decide(pending.id, 'owner-session-id', 'approve');
+```
+
+### x402Client
+
+```typescript
+import { X402Client } from './lib/x402-client';
+
+const x402 = new X402Client({
+  circleClient,
+  walletId: 'your-wallet-id',
+  chain: 'ETH-SEPOLIA',
+});
+
+// Make a paid API call (auto-handles 402 responses)
+const response = await x402.fetch('https://api.example.com/premium-data', {
+  method: 'GET',
+  maxPayment: '1.00', // Max USDC willing to pay
+});
+
+// Check payment history
+const receipts = x402.getPaymentReceipts();
+```
+
+### EscrowManager with Templates
+
+```typescript
+import { EscrowManager } from './lib/escrow';
+import { EscrowTemplates } from './lib/escrow-templates';
+
+const escrow = new EscrowManager({ circleClient });
+
+// Use a pre-built template
+const freelanceEscrow = await escrow.createFromTemplate(
+  EscrowTemplates.freelance.milestone({
+    client: '0xClient...',
+    freelancer: '0xFreelancer...',
+    milestones: [
+      { name: 'Design', amount: '500' },
+      { name: 'Development', amount: '1500' },
+      { name: 'Launch', amount: '500' },
+    ],
+  })
+);
+
+// Or build custom conditions
+import { ConditionBuilder } from './lib/condition-builder';
+
+const conditions = new ConditionBuilder()
+  .requireSignatures(['buyer', 'seller'])
+  .requireDocument('inspection_report')
+  .addTimelock(7 * 24 * 60 * 60 * 1000) // 7 days
+  .build();
+
+const customEscrow = await escrow.create({
+  buyer: '0x...',
+  seller: '0x...',
+  amount: '10000',
+  conditions,
+});
 ```
 
 ## Testnet Faucets
