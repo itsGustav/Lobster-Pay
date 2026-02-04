@@ -1277,6 +1277,40 @@
       }
     }
     
+    @keyframes danceLobster {
+      0%, 100% {
+        transform: rotate(-15deg) scale(1);
+      }
+      25% {
+        transform: rotate(15deg) scale(1.1);
+      }
+      50% {
+        transform: rotate(-15deg) scale(1);
+      }
+      75% {
+        transform: rotate(15deg) scale(1.1);
+      }
+    }
+    
+    @keyframes lobsterFloat {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-400px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    .dancing-lobster {
+      position: absolute;
+      font-size: 2rem;
+      pointer-events: none;
+      animation: lobsterFloat 2s ease-out forwards;
+      z-index: 100;
+    }
+    
     @keyframes shimmer {
       0% {
         background-position: -200% 0;
@@ -2789,6 +2823,17 @@ npx usdc-agent status</code></pre>
       setTimeout(() => ringsContainer.remove(), 2000);
     }
     
+    function spawnDancingLobster() {
+      const lobster = document.createElement('div');
+      lobster.className = 'dancing-lobster';
+      lobster.textContent = '🦞';
+      lobster.style.left = Math.random() * 80 + 10 + '%';
+      lobster.style.bottom = '0';
+      lobster.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+      animationArea.appendChild(lobster);
+      setTimeout(() => lobster.remove(), 2000);
+    }
+    
     function showResult(icon, title, subtitle, amount, isNegative = false) {
       animationArea.innerHTML = `
         <div class="demo-result">
@@ -2858,15 +2903,19 @@ npx usdc-agent status</code></pre>
         const amount = amounts[Math.floor(Math.random() * amounts.length)];
         animationArea.innerHTML = `
           <div class="demo-result">
-            <div class="demo-result-icon" style="animation: bounceIn 0.6s ease, pulse 1.5s ease infinite; color: #A855F7;">💜</div>
-            <div class="demo-result-title">Tip Sent!</div>
+            <div class="demo-result-icon" style="animation: danceLobster 0.5s ease infinite; font-size: 3rem;">🦞</div>
+            <div class="demo-result-title" style="color: #A855F7;">Tip Sent!</div>
             <div class="demo-result-amount" style="color: #A855F7;">$${amount.toFixed(2)}</div>
-            <div class="demo-result-subtitle">Thank you for supporting!</div>
+            <div class="demo-result-subtitle">🦞 The lobster dances for you! 🦞</div>
           </div>
         `;
+        // Spawn multiple dancing lobsters
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => spawnDancingLobster(), i * 200);
+        }
         createConfetti(30);
         updateBalance(-amount);
-        setTimeout(resetDemo, 3000);
+        setTimeout(resetDemo, 4000);
       },
       'agent-hire': () => {
         const agents = ['CodeBot', 'ResearchAI', 'AuditBot', 'DataAgent', 'WriterBot'];
