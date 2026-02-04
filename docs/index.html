@@ -915,6 +915,74 @@
       text-decoration: underline;
     }
     
+    /* ===== ALL FEATURES ===== */
+    .all-features {
+      padding: 120px 0;
+      background: var(--gray-900);
+    }
+    
+    .features-categories {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    
+    .feature-category {
+      background: var(--darker);
+      border: 1px solid var(--gray-800);
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: all 0.3s;
+    }
+    
+    .feature-category:hover {
+      border-color: var(--gray-700);
+    }
+    
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--gray-800);
+    }
+    
+    .category-icon {
+      font-size: 28px;
+    }
+    
+    .category-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin: 0;
+    }
+    
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--gray-400);
+      line-height: 1.5;
+    }
+    
+    .feature-list .check {
+      color: var(--secondary);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    
     /* ===== CTA ===== */
     .cta {
       padding: 120px 0;
@@ -1501,6 +1569,32 @@
       height: 56px;
     }
     
+    /* Mobile all features */
+    .all-features {
+      padding: 80px 0;
+    }
+    
+    .features-categories {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    
+    .feature-category {
+      padding: 24px 20px;
+    }
+    
+    .category-icon {
+      font-size: 24px;
+    }
+    
+    .category-header h3 {
+      font-size: 15px;
+    }
+    
+    .feature-list li {
+      font-size: 13px;
+    }
+    
     /* Mobile CTA */
     .cta {
       padding: 80px 0;
@@ -1637,6 +1731,10 @@
         grid-column: span 2;
       }
       
+      .features-categories {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
       .cta h2 {
         font-size: 40px;
       }
@@ -1732,6 +1830,10 @@
         font-size: 40px;
       }
       
+      .features-categories {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
       .cta h2 {
         font-size: 48px;
       }
@@ -1749,6 +1851,10 @@
       
       .logos-grid {
         gap: 60px;
+      }
+      
+      .features-categories {
+        grid-template-columns: repeat(4, 1fr);
       }
     }
     
@@ -2252,6 +2358,212 @@ npx usdc-agent status</code></pre>
             <h3>Analytics & Reporting</h3>
             <p>Track spending by category, monitor transaction volume, export for accounting. Full visibility into your agent's financial activity.</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- All Features -->
+  <section class="all-features" id="all-features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Complete Feature Set</span>
+        <h2 class="section-title">Everything included</h2>
+        <p class="section-subtitle">A comprehensive toolkit for agent-to-agent commerce.</p>
+      </div>
+      
+      <div class="features-categories">
+        <!-- Core Payments -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">💳</span>
+            <h3>Core Payments</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Send USDC to any address</li>
+            <li><span class="check">✓</span> Receive with generated addresses</li>
+            <li><span class="check">✓</span> Multi-chain support (5+ networks)</li>
+            <li><span class="check">✓</span> Cross-chain bridges via CCTP</li>
+            <li><span class="check">✓</span> Real-time balance tracking</li>
+            <li><span class="check">✓</span> Transaction history</li>
+          </ul>
+        </div>
+        
+        <!-- x402 Protocol -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">⚡</span>
+            <h3>x402 Protocol</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> HTTP-native micropayments</li>
+            <li><span class="check">✓</span> Auto-pay on 402 response</li>
+            <li><span class="check">✓</span> Payment receipt verification</li>
+            <li><span class="check">✓</span> Max payment limits</li>
+            <li><span class="check">✓</span> Retry with proof of payment</li>
+            <li><span class="check">✓</span> Server middleware included</li>
+          </ul>
+        </div>
+        
+        <!-- ERC-8004 Trust -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">🛡️</span>
+            <h3>ERC-8004 Trust</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> On-chain agent identity</li>
+            <li><span class="check">✓</span> NFT-based registration</li>
+            <li><span class="check">✓</span> Reputation scoring</li>
+            <li><span class="check">✓</span> Feedback after transactions</li>
+            <li><span class="check">✓</span> Trust-based payment limits</li>
+            <li><span class="check">✓</span> Agent discovery service</li>
+          </ul>
+        </div>
+        
+        <!-- Escrow -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">🏦</span>
+            <h3>Escrow Service</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Freelance milestone payments</li>
+            <li><span class="check">✓</span> Real estate earnest money</li>
+            <li><span class="check">✓</span> E-commerce buyer protection</li>
+            <li><span class="check">✓</span> P2P trade escrow</li>
+            <li><span class="check">✓</span> Multi-party approval</li>
+            <li><span class="check">✓</span> Condition-based release</li>
+            <li><span class="check">✓</span> Custom condition builder</li>
+          </ul>
+        </div>
+        
+        <!-- Invoicing -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">📄</span>
+            <h3>Invoicing</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Professional invoice creation</li>
+            <li><span class="check">✓</span> Line items with tax</li>
+            <li><span class="check">✓</span> Payment link generation</li>
+            <li><span class="check">✓</span> Status tracking (sent/viewed/paid)</li>
+            <li><span class="check">✓</span> Overdue detection</li>
+            <li><span class="check">✓</span> Recurring billing</li>
+          </ul>
+        </div>
+        
+        <!-- Contacts -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">👥</span>
+            <h3>Address Book</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Save contacts with names</li>
+            <li><span class="check">✓</span> Multi-chain addresses per contact</li>
+            <li><span class="check">✓</span> Tags and search</li>
+            <li><span class="check">✓</span> Send by name ("pay Alice")</li>
+            <li><span class="check">✓</span> CSV import/export</li>
+            <li><span class="check">✓</span> Favorite contacts</li>
+          </ul>
+        </div>
+        
+        <!-- Approvals -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">✅</span>
+            <h3>Approvals</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Multi-approver policies</li>
+            <li><span class="check">✓</span> Amount-based triggers</li>
+            <li><span class="check">✓</span> Daily spending limits</li>
+            <li><span class="check">✓</span> Approval/rejection workflow</li>
+            <li><span class="check">✓</span> Timeout handling</li>
+            <li><span class="check">✓</span> Audit trail</li>
+          </ul>
+        </div>
+        
+        <!-- Notifications -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">🔔</span>
+            <h3>Notifications</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Real-time payment alerts</li>
+            <li><span class="check">✓</span> Webhook delivery</li>
+            <li><span class="check">✓</span> HMAC signature verification</li>
+            <li><span class="check">✓</span> Configurable thresholds</li>
+            <li><span class="check">✓</span> Rate limiting</li>
+            <li><span class="check">✓</span> Channel integration</li>
+          </ul>
+        </div>
+        
+        <!-- Analytics -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">📊</span>
+            <h3>Analytics</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Daily/weekly/monthly summaries</li>
+            <li><span class="check">✓</span> Category breakdown</li>
+            <li><span class="check">✓</span> Top recipients analysis</li>
+            <li><span class="check">✓</span> Chain distribution</li>
+            <li><span class="check">✓</span> CSV export</li>
+            <li><span class="check">✓</span> Trend visualization</li>
+          </ul>
+        </div>
+        
+        <!-- Tips -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">💰</span>
+            <h3>Tip Jar</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Create tip jars</li>
+            <li><span class="check">✓</span> Leaderboards (top tippers)</li>
+            <li><span class="check">✓</span> Real-time notifications</li>
+            <li><span class="check">✓</span> Agent-to-agent tips</li>
+            <li><span class="check">✓</span> Custom tip amounts</li>
+            <li><span class="check">✓</span> Thank you messages</li>
+          </ul>
+        </div>
+        
+        <!-- Commission -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">💼</span>
+            <h3>Commission</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> Platform fee collection</li>
+            <li><span class="check">✓</span> Percentage-based splits</li>
+            <li><span class="check">✓</span> Automatic deduction</li>
+            <li><span class="check">✓</span> Commission reporting</li>
+            <li><span class="check">✓</span> Multi-party splits</li>
+            <li><span class="check">✓</span> Configurable rates</li>
+          </ul>
+        </div>
+        
+        <!-- Developer Experience -->
+        <div class="feature-category">
+          <div class="category-header">
+            <span class="category-icon">🛠️</span>
+            <h3>Developer Experience</h3>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span> TypeScript native</li>
+            <li><span class="check">✓</span> One-liner setup</li>
+            <li><span class="check">✓</span> CLI included</li>
+            <li><span class="check">✓</span> Full documentation</li>
+            <li><span class="check">✓</span> Example code</li>
+            <li><span class="check">✓</span> MIT licensed</li>
+          </ul>
         </div>
       </div>
     </div>
