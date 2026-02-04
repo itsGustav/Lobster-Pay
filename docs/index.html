@@ -1292,6 +1292,11 @@
       }
     }
     
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
     @keyframes lobsterFloat {
       0% {
         transform: translateY(0) rotate(0deg);
@@ -2757,12 +2762,63 @@ npx lobster-pay status</code></pre>
   <!-- Support Section -->
   <section id="support" style="padding: 80px 0; background: var(--gray-900); border-top: 1px solid var(--gray-800);">
     <div class="container">
-      <div style="max-width: 600px; margin: 0 auto; text-align: center;">
-        <div style="font-size: 4rem; margin-bottom: 16px;">🦞</div>
-        <h2 style="font-size: 2rem; margin-bottom: 12px; color: var(--white);">Support Lobster Pay</h2>
-        <p style="color: var(--gray-400); margin-bottom: 32px;">
-          Help keep the lobsters dancing! Your support funds development, infrastructure, and API costs.
-        </p>
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 48px;">
+          <div style="font-size: 4rem; margin-bottom: 16px;">🦞</div>
+          <h2 style="font-size: 2rem; margin-bottom: 12px; color: var(--white);">Support Lobster Pay</h2>
+          <p style="color: var(--gray-400);">
+            This donation box is <strong style="color: var(--secondary);">powered by Lobster Pay</strong> — we eat our own dogfood!
+          </p>
+        </div>
+        
+        <!-- Live Demo Box -->
+        <div style="background: var(--darker); border: 2px solid var(--primary); border-radius: 20px; padding: 32px; margin-bottom: 32px; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 12px; right: 16px; background: var(--primary); color: white; font-size: 0.7rem; padding: 4px 10px; border-radius: 100px; font-weight: 600;">LIVE DEMO</div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;">
+            <!-- Left: Code -->
+            <div>
+              <div style="color: var(--gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;">How this works</div>
+              <div style="background: var(--gray-900); border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6;">
+                <span style="color: var(--gray-600);">// Lobster Pay donation setup</span><br>
+                <span style="color: #C678DD;">const</span> <span style="color: #E06C75;">donate</span> = <span style="color: #C678DD;">await</span> <span style="color: #61AFEF;">lobster</span>.<span style="color: #61AFEF;">createPaymentLink</span>({<br>
+                &nbsp;&nbsp;<span style="color: #E06C75;">recipient</span>: <span style="color: #98C379;">'0xf775...8b7B'</span>,<br>
+                &nbsp;&nbsp;<span style="color: #E06C75;">amounts</span>: [<span style="color: #D19A66;">5</span>, <span style="color: #D19A66;">10</span>, <span style="color: #D19A66;">25</span>, <span style="color: #D19A66;">50</span>],<br>
+                &nbsp;&nbsp;<span style="color: #E06C75;">onSuccess</span>: () => <span style="color: #61AFEF;">danceLobster</span>()<br>
+                });<br>
+              </div>
+            </div>
+            
+            <!-- Right: Interactive Demo -->
+            <div style="text-align: center;">
+              <div style="color: var(--gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;">Select amount (USDC)</div>
+              <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap;" id="donation-amounts">
+                <button onclick="selectDonation(5)" class="donation-btn" data-amount="5" style="background: var(--gray-800); border: 2px solid var(--gray-700); color: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s;">$5</button>
+                <button onclick="selectDonation(10)" class="donation-btn" data-amount="10" style="background: var(--gray-800); border: 2px solid var(--gray-700); color: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s;">$10</button>
+                <button onclick="selectDonation(25)" class="donation-btn selected" data-amount="25" style="background: var(--primary); border: 2px solid var(--primary); color: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s;">$25</button>
+                <button onclick="selectDonation(50)" class="donation-btn" data-amount="50" style="background: var(--gray-800); border: 2px solid var(--gray-700); color: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s;">$50</button>
+              </div>
+              <button onclick="simulateDonation()" id="donate-btn" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: white; padding: 16px 48px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 10px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(99, 91, 255, 0.4);">
+                <span>🦞</span>
+                <span id="donate-btn-text">Donate $25 USDC</span>
+              </button>
+              <div style="color: var(--gray-600); font-size: 0.75rem; margin-top: 12px;">Powered by Lobster Pay on Base</div>
+            </div>
+          </div>
+          
+          <!-- Success Animation (hidden by default) -->
+          <div id="donation-success" style="display: none; position: absolute; inset: 0; background: rgba(3, 7, 18, 0.95); flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <div style="font-size: 5rem; animation: danceLobster 0.5s ease infinite;" id="success-lobster">🦞</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--white); margin: 16px 0 8px;">Thank you!</div>
+            <div style="color: var(--secondary);" id="success-amount">$25 USDC received</div>
+            <div style="color: var(--gray-500); font-size: 0.8rem; margin-top: 8px;">Transaction confirmed on Base</div>
+          </div>
+        </div>
+        
+        <!-- Actual wallet addresses -->
+        <div style="text-align: center; margin-bottom: 24px;">
+          <p style="color: var(--gray-500); font-size: 0.85rem; margin-bottom: 16px;">Or send directly to our wallets:</p>
+        </div>
         
         <div style="background: var(--darker); border: 1px solid var(--gray-700); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
           <!-- ETH/Base -->
@@ -3078,6 +3134,65 @@ npx lobster-pay status</code></pre>
         }
       });
     });
+    
+    // Donation demo
+    let selectedAmount = 25;
+    
+    function selectDonation(amount) {
+      selectedAmount = amount;
+      document.querySelectorAll('.donation-btn').forEach(btn => {
+        if (parseInt(btn.dataset.amount) === amount) {
+          btn.style.background = 'var(--primary)';
+          btn.style.borderColor = 'var(--primary)';
+        } else {
+          btn.style.background = 'var(--gray-800)';
+          btn.style.borderColor = 'var(--gray-700)';
+        }
+      });
+      document.getElementById('donate-btn-text').textContent = `Donate $${amount} USDC`;
+    }
+    
+    function simulateDonation() {
+      const btn = document.getElementById('donate-btn');
+      const successDiv = document.getElementById('donation-success');
+      const successAmount = document.getElementById('success-amount');
+      
+      // Show loading
+      btn.disabled = true;
+      btn.innerHTML = '<span style="animation: spin 1s linear infinite; display: inline-block;">🦞</span> Processing...';
+      
+      // Simulate transaction
+      setTimeout(() => {
+        successAmount.textContent = `$${selectedAmount} USDC received`;
+        successDiv.style.display = 'flex';
+        
+        // Spawn dancing lobsters
+        for (let i = 0; i < 8; i++) {
+          setTimeout(() => {
+            const lobster = document.createElement('div');
+            lobster.textContent = '🦞';
+            lobster.style.cssText = `
+              position: fixed;
+              font-size: ${Math.random() * 2 + 1.5}rem;
+              left: ${Math.random() * 100}%;
+              bottom: 0;
+              animation: lobsterFloat 2.5s ease-out forwards;
+              pointer-events: none;
+              z-index: 1000;
+            `;
+            document.body.appendChild(lobster);
+            setTimeout(() => lobster.remove(), 2500);
+          }, i * 150);
+        }
+        
+        // Reset after delay
+        setTimeout(() => {
+          successDiv.style.display = 'none';
+          btn.disabled = false;
+          btn.innerHTML = `<span>🦞</span><span id="donate-btn-text">Donate $${selectedAmount} USDC</span>`;
+        }, 4000);
+      }, 1500);
+    }
   </script>
 </body>
 </html>
