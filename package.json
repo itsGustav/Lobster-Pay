@@ -1,0 +1,44 @@
+{
+  "name": "usdc-agent",
+  "version": "1.0.0",
+  "description": "USDC Agent Skill for Clawdbot - Circle Programmable Wallets integration",
+  "main": "lib/circle-client.ts",
+  "bin": {
+    "usdc-agent": "./scripts/usdc-cli.ts"
+  },
+  "scripts": {
+    "cli": "npx ts-node scripts/usdc-cli.ts",
+    "balance": "npx ts-node scripts/usdc-cli.ts balance",
+    "send": "npx ts-node scripts/usdc-cli.ts send",
+    "receive": "npx ts-node scripts/usdc-cli.ts receive",
+    "setup": "npx ts-node scripts/usdc-cli.ts setup"
+  },
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "ts-node": "^10.9.0"
+  },
+  "keywords": [
+    "usdc",
+    "circle",
+    "crypto",
+    "wallet",
+    "clawdbot",
+    "openclaw",
+    "skill",
+    "blockchain",
+    "testnet"
+  ],
+  "author": "OpenClaw Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openclaw/usdc-agent-skill"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
