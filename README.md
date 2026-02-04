@@ -6,12 +6,21 @@
 
 ## ✨ Highlights
 
+- **ERC-8004 Trustless Agents** — On-chain identity & reputation for AI agents
 - **x402 Payment Protocol** — HTTP-native micropayments for AI agents
 - **Escrow as a Service** — Pre-built templates for any industry
-- **Agent-to-Agent Commerce** — Autonomous payments between bots
-- **Multi-Chain Support** — Ethereum, Polygon, Avalanche, Arbitrum
+- **Agent-to-Agent Commerce** — Autonomous payments between bots with trust verification
+- **Multi-Chain Support** — Ethereum, Polygon, Avalanche, Arbitrum, Base
 
 ## Features
+
+### 🆔 ERC-8004 Trustless Agents (NEW)
+- 🪪 **On-Chain Identity** — NFT-based agent registration
+- ⭐ **Reputation System** — Feedback & ratings after transactions
+- 🔍 **Agent Discovery** — Find trusted agents by capability
+- ✅ **Trust Verification** — Verify agents before paying them
+- 📊 **Payment Safety** — Risk-based payment limits by trust score
+- 🤝 **Post-Transaction Feedback** — Build reputation through use
 
 ### 🔐 x402 Payment Protocol (NEW)
 - 💳 **HTTP-Native Payments** — `402 Payment Required` → automatic USDC payment
@@ -137,6 +146,12 @@ usdc-agent/
 │   ├── escrow.ts            # Escrow management & multi-party release
 │   ├── escrow-templates.ts  # Pre-built escrow templates
 │   ├── condition-builder.ts # Flexible condition DSL
+│   └── erc8004/             # ERC-8004 Trustless Agents
+│       ├── index.ts         # Main client & helpers
+│       ├── identity.ts      # Identity Registry (agent registration)
+│       ├── reputation.ts    # Reputation Registry (feedback)
+│       ├── discovery.ts     # Agent discovery service
+│       └── constants.ts     # Contract addresses & types
 │   ├── invoices.ts          # Invoice & recurring payment management
 │   ├── contacts.ts          # Address book & contact resolution
 │   ├── approvals.ts         # Multi-sig style approval workflows
@@ -145,10 +160,11 @@ usdc-agent/
 ├── scripts/
 │   └── usdc-cli.ts          # CLI tool for testing
 ├── docs/
-│   ├── x402-integration.md  # x402 protocol documentation
-│   ├── x402-quickstart.md   # Quick start guide
-│   ├── escrow-templates.md  # Escrow template reference
-│   └── ARCHITECTURE.md      # Technical architecture
+│   ├── erc8004-integration.md # ERC-8004 Trustless Agents guide
+│   ├── x402-integration.md    # x402 protocol documentation
+│   ├── x402-quickstart.md     # Quick start guide
+│   ├── escrow-templates.md    # Escrow template reference
+│   └── ARCHITECTURE.md        # Technical architecture
 ├── examples/
 │   ├── x402-client-example.ts
 │   └── x402-server-example.ts
@@ -289,6 +305,37 @@ const response = await x402.fetch('https://api.example.com/premium-data', {
 
 // Check payment history
 const receipts = x402.getPaymentReceipts();
+```
+
+### ERC8004Client (Trustless Agents)
+
+```typescript
+import { createERC8004Client } from './lib/erc8004';
+
+const erc8004 = createERC8004Client('BASE-SEPOLIA', privateKey, {
+  paymentAddress: '0x...',
+  x402Endpoint: 'https://my-agent.com/x402',
+});
+
+// Register your agent
+const agentId = await erc8004.registerAgent({
+  name: 'My USDC Agent',
+  description: 'AI agent accepting USDC payments',
+  capabilities: ['payments', 'escrow', 'invoicing'],
+});
+
+// Verify another agent before paying
+const verification = await erc8004.verifyAgent(targetAgentId);
+if (verification.verified && verification.recommendation === 'safe') {
+  // Proceed with payment
+}
+
+// Check payment safety
+const safety = await erc8004.isPaymentSafe(targetAgentId, 500);
+// => { safe: true, maxRecommendedAmount: 1000, trustScore: 82 }
+
+// Post feedback after transaction
+await erc8004.postPaymentSuccess(targetAgentId, txHash, '100');
 ```
 
 ### EscrowManager with Templates
