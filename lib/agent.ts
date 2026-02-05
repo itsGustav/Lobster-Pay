@@ -1,6 +1,6 @@
 /**
  * LobsterAgent - Main class for Pay Lobster SDK
- * Now with REAL transaction signing! 🦞
+ * Now with REAL on-chain contracts! 🦞
  */
 
 import { ethers } from 'ethers';
@@ -16,16 +16,10 @@ import type {
   DiscoverOptions,
   AutonomousConfig
 } from './types';
+import { CONTRACTS, ESCROW_ABI, REGISTRY_ABI, ERC20_ABI, EscrowStatus } from './contracts';
 
 const BASE_RPC = 'https://mainnet.base.org';
-const USDC_BASE = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
-
-// Minimal ERC-20 ABI for transfer
-const ERC20_ABI = [
-  'function transfer(address to, uint256 amount) returns (bool)',
-  'function balanceOf(address owner) view returns (uint256)',
-  'function decimals() view returns (uint8)'
-];
+const USDC_BASE = CONTRACTS.usdc;
 
 export class LobsterAgent {
   private config: LobsterConfig;
@@ -214,13 +208,44 @@ export class LobsterAgent {
   }
 
   /**
-   * Create an escrow
+   * Create an escrow - REAL on-chain! 🦞
    */
   async createEscrow(options: EscrowOptions): Promise<Escrow> {
+    if (!this.signer) {
+      throw new Error('No signer available. Provide privateKey to create escrow.');
+    }
+
+    const usdc = new ethers.Contract(CONTRACTS.usdc, ERC20_ABI, this.signer);
+    const escrowContract = new ethers.Contract(CONTRACTS.escrow, ESCROW_ABI, this.signer);
+    
+    const amount = ethers.parseUnits(options.amount, 6);
+    const deadline = options.deadline ? Math.floor(new Date(options.deadline).getTime() / 1000) : 0;
+    const description = options.conditions?.description || '';
+
+    // Approve USDC spend
+    console.log('🦞 Approving USDC for escrow...');
+    const approveTx = await usdc.approve(CONTRACTS.escrow, amount);
+    await approveTx.wait();
+
+    // Create escrow
+    console.log('🦞 Creating escrow...');
+    const tx = await escrowContract.createEscrow(options.recipient, amount, description, deadline);
+    const receipt = await tx.wait();
+    
+    // Get escrow ID from event
+    const event = receipt.logs.find((log: any) => {
+      try {
+        return escrowContract.interface.parseLog(log)?.name === 'EscrowCreated';
+      } catch { return false; }
+    });
+    const escrowId = event ? escrowContract.interface.parseLog(event)?.args[0].toString() : '0';
+
+    console.log(`✅ Escrow created: ID ${escrowId}`);
+
     return {
-      id: `esc_${Date.now()}`,
+      id: escrowId,
       amount: options.amount,
-      buyer: this.wallet?.address || '',
+      buyer: this.signer.address,
       seller: options.recipient,
       status: 'funded',
       conditions: options.conditions,
@@ -229,55 +254,101 @@ export class LobsterAgent {
   }
 
   /**
-   * Release escrow funds
+   * Release escrow funds - REAL on-chain! 🦞
    */
   async releaseEscrow(escrowId: string, options?: { amount?: string }): Promise<void> {
-    console.log(`Releasing escrow ${escrowId}`, options);
+    if (!this.signer) throw new Error('No signer available');
+    
+    const escrowContract = new ethers.Contract(CONTRACTS.escrow, ESCROW_ABI, this.signer);
+    console.log(`🦞 Releasing escrow ${escrowId}...`);
+    const tx = await escrowContract.releaseEscrow(escrowId);
+    await tx.wait();
+    console.log(`✅ Escrow ${escrowId} released!`);
   }
 
   /**
-   * Refund escrow
+   * Refund escrow - REAL on-chain! 🦞
    */
   async refundEscrow(escrowId: string): Promise<void> {
-    console.log(`Refunding escrow ${escrowId}`);
+    if (!this.signer) throw new Error('No signer available');
+    
+    const escrowContract = new ethers.Contract(CONTRACTS.escrow, ESCROW_ABI, this.signer);
+    console.log(`🦞 Refunding escrow ${escrowId}...`);
+    const tx = await escrowContract.refundEscrow(escrowId);
+    await tx.wait();
+    console.log(`✅ Escrow ${escrowId} refunded!`);
   }
 
   /**
-   * Dispute escrow
+   * Dispute escrow - REAL on-chain! 🦞
    */
   async disputeEscrow(escrowId: string, options: { reason: string }): Promise<void> {
-    console.log(`Disputing escrow ${escrowId}: ${options.reason}`);
+    if (!this.signer) throw new Error('No signer available');
+    
+    const escrowContract = new ethers.Contract(CONTRACTS.escrow, ESCROW_ABI, this.signer);
+    console.log(`🦞 Disputing escrow ${escrowId}: ${options.reason}`);
+    const tx = await escrowContract.disputeEscrow(escrowId);
+    await tx.wait();
+    console.log(`✅ Escrow ${escrowId} disputed!`);
   }
 
   /**
-   * Get trust score for an address
+   * Get trust score for an address - REAL on-chain! 🦞
    */
   async getTrustScore(address: string): Promise<TrustScore> {
-    // Would query ERC-8004 registry
-    return {
-      score: 100,
-      level: 'new',
-      totalTransactions: 0,
-      successRate: 100
-    };
+    const provider = this.provider || new ethers.JsonRpcProvider(BASE_RPC);
+    const registry = new ethers.Contract(CONTRACTS.registry, REGISTRY_ABI, provider);
+    
+    try {
+      const [score, ratings] = await registry.getTrustScore(address);
+      const level = score >= 80 ? 'verified' : score >= 60 ? 'trusted' : score >= 40 ? 'established' : 'new';
+      
+      return {
+        score: Number(score),
+        level,
+        totalTransactions: Number(ratings),
+        successRate: 100
+      };
+    } catch {
+      return { score: 50, level: 'new', totalTransactions: 0, successRate: 100 };
+    }
   }
 
   /**
-   * Rate an agent
+   * Rate an agent - REAL on-chain! 🦞
    */
   async rateAgent(options: { agent: string; rating: number; comment?: string; transactionId?: string }): Promise<void> {
-    console.log(`Rating agent ${options.agent}: ${options.rating}/5`);
+    if (!this.signer) throw new Error('No signer available');
+    
+    const registry = new ethers.Contract(CONTRACTS.registry, REGISTRY_ABI, this.signer);
+    console.log(`🦞 Rating agent ${options.agent}: ${options.rating}/5...`);
+    const tx = await registry.rateAgent(options.agent, options.rating, options.comment || '');
+    await tx.wait();
+    console.log(`✅ Agent rated!`);
   }
 
   /**
-   * Get agent ratings
+   * Get agent ratings - REAL on-chain! 🦞
    */
   async getAgentRatings(address: string): Promise<any[]> {
-    return [];
+    const provider = this.provider || new ethers.JsonRpcProvider(BASE_RPC);
+    const registry = new ethers.Contract(CONTRACTS.registry, REGISTRY_ABI, provider);
+    
+    try {
+      const ratings = await registry.getAgentRatings(address, 10);
+      return ratings.map((r: any) => ({
+        rater: r.rater,
+        rating: Number(r.score),
+        comment: r.comment,
+        timestamp: new Date(Number(r.timestamp) * 1000).toISOString()
+      }));
+    } catch {
+      return [];
+    }
   }
 
   /**
-   * Register agent in on-chain registry
+   * Register agent in on-chain registry - REAL! 🦞
    */
   async registerAgent(options: {
     name: string;
@@ -285,28 +356,87 @@ export class LobsterAgent {
     pricing?: Record<string, string>;
     metadata?: Record<string, any>;
   }): Promise<void> {
-    console.log(`Registering agent: ${options.name}`);
+    if (!this.signer) throw new Error('No signer available');
+    
+    const registry = new ethers.Contract(CONTRACTS.registry, REGISTRY_ABI, this.signer);
+    const capabilitiesCSV = options.capabilities.join(',');
+    const metadataURI = options.metadata ? JSON.stringify(options.metadata) : '';
+    
+    console.log(`🦞 Registering agent: ${options.name}...`);
+    const tx = await registry.registerAgent(options.name, capabilitiesCSV, metadataURI);
+    await tx.wait();
+    console.log(`✅ Agent registered on-chain!`);
   }
 
   /**
-   * Discover agents by capability
+   * Discover agents - REAL on-chain! 🦞
    */
   async discoverAgents(options: DiscoverOptions): Promise<Agent[]> {
-    // Would query on-chain registry
-    return [{
-      address: '0xf775f0224A680E2915a066e53A389d0335318b7B',
-      name: 'paylobster',
-      capabilities: ['payments', 'escrow'],
-      trustScore: { score: 100, level: 'verified', totalTransactions: 0, successRate: 100 }
-    }];
+    const provider = this.provider || new ethers.JsonRpcProvider(BASE_RPC);
+    const registry = new ethers.Contract(CONTRACTS.registry, REGISTRY_ABI, provider);
+    
+    try {
+      const limit = options.limit || 10;
+      const [addresses, names, trustScores] = await registry.discoverAgents(limit);
+      
+      const agents: Agent[] = [];
+      for (let i = 0; i < addresses.length; i++) {
+        if (addresses[i] === ethers.ZeroAddress) continue;
+        
+        const level = trustScores[i] >= 80 ? 'verified' : trustScores[i] >= 60 ? 'trusted' : 
+                      trustScores[i] >= 40 ? 'established' : 'new';
+        
+        agents.push({
+          address: addresses[i],
+          name: names[i],
+          capabilities: [], // Parse from getAgent if needed
+          trustScore: {
+            score: Number(trustScores[i]),
+            level: level as any,
+            totalTransactions: 0,
+            successRate: 100
+          }
+        });
+      }
+      
+      return agents;
+    } catch (e) {
+      console.error('Discovery error:', e);
+      return [];
+    }
   }
 
   /**
-   * Get agent details
+   * Get agent details - REAL on-chain! 🦞
    */
   async getAgent(address: string): Promise<Agent | null> {
-    const agents = await this.discoverAgents({});
-    return agents.find(a => a.address.toLowerCase() === address.toLowerCase()) || null;
+    const provider = this.provider || new ethers.JsonRpcProvider(BASE_RPC);
+    const registry = new ethers.Contract(CONTRACTS.registry, REGISTRY_ABI, provider);
+    
+    try {
+      const [name, capabilitiesCSV, metadataURI, registeredAt, active, trustScore, numRatings] = 
+        await registry.getAgent(address);
+      
+      if (!active) return null;
+      
+      const level = trustScore >= 80 ? 'verified' : trustScore >= 60 ? 'trusted' : 
+                    trustScore >= 40 ? 'established' : 'new';
+      
+      return {
+        address,
+        name,
+        capabilities: capabilitiesCSV.split(',').filter((c: string) => c),
+        trustScore: {
+          score: Number(trustScore),
+          level: level as any,
+          totalTransactions: Number(numRatings),
+          successRate: 100
+        },
+        metadata: metadataURI ? JSON.parse(metadataURI) : undefined
+      };
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -353,9 +483,54 @@ export class LobsterAgent {
   }
 
   /**
-   * List transfer history
+   * List transfer history - queries USDC Transfer events! 🦞
    */
   async listTransfers(options?: { limit?: number; direction?: string; since?: string }): Promise<Transfer[]> {
-    return [];
+    const address = this.signer?.address || this.wallet?.address || this.config.walletId;
+    if (!address) return [];
+    
+    const provider = this.provider || new ethers.JsonRpcProvider(BASE_RPC);
+    const usdc = new ethers.Contract(CONTRACTS.usdc, [
+      'event Transfer(address indexed from, address indexed to, uint256 value)'
+    ], provider);
+    
+    try {
+      const currentBlock = await provider.getBlockNumber();
+      const fromBlock = currentBlock - 10000; // Last ~10k blocks
+      
+      // Get transfers to/from this address
+      const filterTo = usdc.filters.Transfer(null, address);
+      const filterFrom = usdc.filters.Transfer(address, null);
+      
+      const [eventsTo, eventsFrom] = await Promise.all([
+        usdc.queryFilter(filterTo, fromBlock, currentBlock),
+        usdc.queryFilter(filterFrom, fromBlock, currentBlock)
+      ]);
+      
+      const transfers: Transfer[] = [];
+      
+      for (const event of [...eventsTo, ...eventsFrom]) {
+        const args = (event as any).args;
+        const block = await event.getBlock();
+        
+        transfers.push({
+          id: event.transactionHash,
+          hash: event.transactionHash,
+          status: 'confirmed',
+          amount: ethers.formatUnits(args.value, 6),
+          to: args.to,
+          from: args.from,
+          createdAt: new Date(block.timestamp * 1000).toISOString()
+        });
+      }
+      
+      // Sort by date, most recent first
+      transfers.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      return transfers.slice(0, options?.limit || 10);
+    } catch (e) {
+      console.error('History error:', e);
+      return [];
+    }
   }
 }

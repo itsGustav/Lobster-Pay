@@ -1,6 +1,6 @@
 /**
  * LobsterAgent - Main class for Pay Lobster SDK
- * Now with REAL transaction signing! 🦞
+ * Now with REAL on-chain contracts! 🦞
  */
 import type { LobsterConfig, Wallet, Transfer, Escrow, TrustScore, Agent, TransferOptions, EscrowOptions, DiscoverOptions, AutonomousConfig } from './types';
 export declare class LobsterAgent {
@@ -44,31 +44,31 @@ export declare class LobsterAgent {
      */
     send(to: string, amount: number | string): Promise<Transfer>;
     /**
-     * Create an escrow
+     * Create an escrow - REAL on-chain! 🦞
      */
     createEscrow(options: EscrowOptions): Promise<Escrow>;
     /**
-     * Release escrow funds
+     * Release escrow funds - REAL on-chain! 🦞
      */
     releaseEscrow(escrowId: string, options?: {
         amount?: string;
     }): Promise<void>;
     /**
-     * Refund escrow
+     * Refund escrow - REAL on-chain! 🦞
      */
     refundEscrow(escrowId: string): Promise<void>;
     /**
-     * Dispute escrow
+     * Dispute escrow - REAL on-chain! 🦞
      */
     disputeEscrow(escrowId: string, options: {
         reason: string;
     }): Promise<void>;
     /**
-     * Get trust score for an address
+     * Get trust score for an address - REAL on-chain! 🦞
      */
     getTrustScore(address: string): Promise<TrustScore>;
     /**
-     * Rate an agent
+     * Rate an agent - REAL on-chain! 🦞
      */
     rateAgent(options: {
         agent: string;
@@ -77,11 +77,11 @@ export declare class LobsterAgent {
         transactionId?: string;
     }): Promise<void>;
     /**
-     * Get agent ratings
+     * Get agent ratings - REAL on-chain! 🦞
      */
     getAgentRatings(address: string): Promise<any[]>;
     /**
-     * Register agent in on-chain registry
+     * Register agent in on-chain registry - REAL! 🦞
      */
     registerAgent(options: {
         name: string;
@@ -90,11 +90,11 @@ export declare class LobsterAgent {
         metadata?: Record<string, any>;
     }): Promise<void>;
     /**
-     * Discover agents by capability
+     * Discover agents - REAL on-chain! 🦞
      */
     discoverAgents(options: DiscoverOptions): Promise<Agent[]>;
     /**
-     * Get agent details
+     * Get agent details - REAL on-chain! 🦞
      */
     getAgent(address: string): Promise<Agent | null>;
     /**
@@ -129,7 +129,7 @@ export declare class LobsterAgent {
      */
     getTransfer(id: string): Promise<Transfer | null>;
     /**
-     * List transfer history
+     * List transfer history - queries USDC Transfer events! 🦞
      */
     listTransfers(options?: {
         limit?: number;
