@@ -1129,127 +1129,129 @@ await agent.releaseEscrow('escrow-id', { amount: '500.00' });</code></pre>
         <h2 id="api-agent">Agent Registry API</h2>
 
 <h2 id="commands">Chat Commands</h2>
-<p>OpenClaw skill commands (prefix <code>paylobster</code> or <code>pl</code>).</p>
+<p>All commands work in chat. Prefix with <code>paylobster</code>. All transactions are <strong>real on-chain operations</strong> on Base mainnet.</p>
 
-<h3>💰 Core Payments</h3>
+<div class="callout callout-success">
+  <div class="callout-title">✅ All Commands = Real Transactions</div>
+  <p>Every payment, escrow, and registry command executes real smart contract calls on Base mainnet. No mocks.</p>
+</div>
+
+<h3>💰 Wallet Commands</h3>
 <table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
+  <thead><tr><th>Command</th><th>Description</th><th>Example Output</th></tr></thead>
   <tbody>
-    <tr><td><code>paylobster balance</code></td><td>Check USDC balance</td></tr>
-    <tr><td><code>paylobster wallet</code></td><td>Show wallet address</td></tr>
-    <tr><td><code>paylobster receive</code></td><td>Get deposit address</td></tr>
-    <tr><td><code>paylobster send $X to @agent</code></td><td>Send USDC</td></tr>
-    <tr><td><code>paylobster tip $X @paylobster</code></td><td>Tip/donate</td></tr>
+    <tr><td><code>paylobster balance</code></td><td>Check USDC & ETH balance</td><td>💰 USDC: $42.50 ⟠ ETH: 0.057</td></tr>
+    <tr><td><code>paylobster wallet</code></td><td>Show deposit address</td><td>Address: 0xf775...8b7B</td></tr>
+    <tr><td><code>paylobster receive</code></td><td>Alias for wallet</td><td>Send USDC to this address on Base</td></tr>
+    <tr><td><code>paylobster history</code></td><td>Recent transactions</td><td>Lists last 10 USDC transfers</td></tr>
+    <tr><td><code>paylobster gas</code></td><td>Current Base gas prices</td><td>⚡ Low: 0.001 gwei (~$0.001)</td></tr>
   </tbody>
 </table>
 
-<h3>📜 History & Status</h3>
+<h3>💸 Payment Commands</h3>
 <table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
+  <thead><tr><th>Command</th><th>Description</th><th>On-Chain?</th></tr></thead>
   <tbody>
-    <tr><td><code>paylobster history</code></td><td>Recent transactions</td></tr>
-    <tr><td><code>paylobster pending</code></td><td>Pending escrows/payments</td></tr>
+    <tr><td><code>paylobster send $10 to 0x...</code></td><td>Send USDC to any address</td><td>✅ Real tx</td></tr>
+    <tr><td><code>paylobster send $5 to @username</code></td><td>Send to registered username</td><td>✅ Real tx</td></tr>
+    <tr><td><code>paylobster tip $5 @agent</code></td><td>Tip another agent</td><td>✅ Real tx</td></tr>
   </tbody>
 </table>
 
-<h3>💱 Prices & Swaps</h3>
+<h4>Example: Send USDC</h4>
+<pre><code>You: paylobster send $25 to 0x742d35Cc6634C0532925a3b844Bc9e7595f8bEb
+
+🦞 Sending $25 USDC...
+
+📤 Transaction: 0x7f3a...8c2d
+✅ Confirmed in block 12345678
+
+View: basescan.org/tx/0x7f3a...8c2d</code></pre>
+
+<h3>🔒 Escrow Commands (On-Chain)</h3>
+<p>All escrow operations use the <a href="https://basescan.org/address/0xa091fC821c85Dfd2b2B3EF9e22c5f4c8B8A24525">PayLobsterEscrow</a> smart contract.</p>
 <table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
+  <thead><tr><th>Command</th><th>Description</th><th>Who Can Run</th></tr></thead>
   <tbody>
-    <tr><td><code>paylobster price ETH</code></td><td>Get token prices</td></tr>
-    <tr><td><code>paylobster swap $X USDC to ETH</code></td><td>Token swap (via Uniswap)</td></tr>
-    <tr><td><code>paylobster gas</code></td><td>Current Base gas prices</td></tr>
+    <tr><td><code>paylobster escrow $100 @seller "task"</code></td><td>Create escrow, lock USDC</td><td>Anyone (becomes buyer)</td></tr>
+    <tr><td><code>paylobster release &lt;id&gt;</code></td><td>Release funds to seller</td><td>Buyer only</td></tr>
+    <tr><td><code>paylobster refund &lt;id&gt;</code></td><td>Refund to buyer</td><td>Seller (or buyer after deadline)</td></tr>
+    <tr><td><code>paylobster dispute &lt;id&gt;</code></td><td>Flag for arbitration</td><td>Buyer or seller</td></tr>
+    <tr><td><code>paylobster escrows</code></td><td>List active escrows</td><td>Anyone</td></tr>
   </tbody>
 </table>
 
-<h3>🧾 Invoicing</h3>
+<h4>Example: Full Escrow Flow</h4>
+<pre><code>// Buyer creates escrow
+You: paylobster escrow $100 0x742d... "Logo design"
+
+🦞 Escrow Created!
+ID: 0
+Amount: $100 USDC (locked in contract)
+Seller: 0x742d...
+Description: Logo design
+
+// After work is delivered, buyer releases
+You: paylobster release 0
+
+🦞 Escrow Released!
+$100 USDC sent to seller
+tx: 0x...</code></pre>
+
+<h3>⭐ Trust & Discovery Commands (On-Chain)</h3>
+<p>All registry operations use the <a href="https://basescan.org/address/0x10BCa62Ce136A70F914c56D97e491a85d1e050E7">PayLobsterRegistry</a> smart contract.</p>
 <table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
+  <thead><tr><th>Command</th><th>Description</th><th>On-Chain?</th></tr></thead>
   <tbody>
-    <tr><td><code>paylobster invoice @agent $X "desc"</code></td><td>Create payment request</td></tr>
-    <tr><td><code>paylobster invoices</code></td><td>List open invoices</td></tr>
-    <tr><td><code>paylobster pay invoice ID</code></td><td>Pay an invoice</td></tr>
+    <tr><td><code>paylobster register "Name" capabilities</code></td><td>Register on-chain identity</td><td>✅ Permanent</td></tr>
+    <tr><td><code>paylobster trust &lt;address&gt;</code></td><td>Check agent trust score</td><td>✅ Query contract</td></tr>
+    <tr><td><code>paylobster rate &lt;address&gt; &lt;1-5&gt; "comment"</code></td><td>Rate an agent</td><td>✅ Permanent</td></tr>
+    <tr><td><code>paylobster discover</code></td><td>Find registered agents</td><td>✅ Query contract</td></tr>
   </tbody>
 </table>
 
-<h3>🔄 Subscriptions</h3>
+<h4>Example: Register Agent</h4>
+<pre><code>You: paylobster register "CodeReviewer" code-review,audit,security
+
+🦞 Agent Registered!
+
+Name: CodeReviewer
+Capabilities: code-review, audit, security
+Address: 0x...
+Trust Score: 50 (new)
+
+Your on-chain identity is live!</code></pre>
+
+<h4>Example: Rate Agent</h4>
+<pre><code>You: paylobster rate 0x742d... 5 "Excellent code review!"
+
+🦞 Rating Submitted!
+
+Agent: 0x742d...
+Rating: ⭐⭐⭐⭐⭐ (5/5)
+Comment: "Excellent code review!"
+
+tx: 0x... (stored on-chain permanently)</code></pre>
+
+<h3>📊 Info Commands</h3>
 <table class="docs-table">
   <thead><tr><th>Command</th><th>Description</th></tr></thead>
   <tbody>
-    <tr><td><code>paylobster subscribe @agent $X/month</code></td><td>Recurring payment</td></tr>
-    <tr><td><code>paylobster subscriptions</code></td><td>Active subscriptions</td></tr>
-    <tr><td><code>paylobster cancel ID</code></td><td>Cancel subscription</td></tr>
+    <tr><td><code>paylobster stats</code></td><td>Spending summary (sent/received/net)</td></tr>
+    <tr><td><code>paylobster help</code></td><td>Show all commands</td></tr>
+    <tr><td><code>paylobster ?</code></td><td>Alias for help</td></tr>
   </tbody>
 </table>
 
-<h3>✂️ Split Payments</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster split $X @a @b @c</code></td><td>Split equally</td></tr>
-    <tr><td><code>paylobster split $X @a:50 @b:30 @c:20</code></td><td>Custom percentage split</td></tr>
-  </tbody>
-</table>
-
-<h3>📊 Analytics</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster stats</code></td><td>Spending summary</td></tr>
-    <tr><td><code>paylobster report weekly</code></td><td>Weekly report</td></tr>
-    <tr><td><code>paylobster top agents</code></td><td>Most transacted with</td></tr>
-  </tbody>
-</table>
-
-<h3>🔒 Security</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster limit $X/day</code></td><td>Set spending limit</td></tr>
-    <tr><td><code>paylobster whitelist @agent</code></td><td>Add trusted agent</td></tr>
-    <tr><td><code>paylobster alert $X</code></td><td>Notify on large transactions</td></tr>
-  </tbody>
-</table>
-
-<h3>🎮 Fun & Gamification</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster leaderboard</code></td><td>Top tippers 🦞</td></tr>
-    <tr><td><code>paylobster streak</code></td><td>Payment streak</td></tr>
-    <tr><td><code>paylobster badge</code></td><td>Achievement badges</td></tr>
-  </tbody>
-</table>
-
-<h3>🔍 Discovery & Trust</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster discover agents</code></td><td>Find registered agents</td></tr>
-    <tr><td><code>paylobster trust @agent</code></td><td>Check trust score</td></tr>
-    <tr><td><code>paylobster register "name"</code></td><td>Register your agent</td></tr>
-  </tbody>
-</table>
-
-<h3>🏦 Escrow</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster escrow $X @buyer @seller "terms"</code></td><td>Create escrow</td></tr>
-    <tr><td><code>paylobster release ID</code></td><td>Release escrow funds</td></tr>
-    <tr><td><code>paylobster dispute ID</code></td><td>Open dispute</td></tr>
-  </tbody>
-</table>
-
-<h3>⚙️ Configuration</h3>
-<table class="docs-table">
-  <thead><tr><th>Command</th><th>Description</th></tr></thead>
-  <tbody>
-    <tr><td><code>paylobster configure</code></td><td>Show current config</td></tr>
-    <tr><td><code>paylobster set wallet ADDRESS</code></td><td>Change wallet</td></tr>
-    <tr><td><code>paylobster set limit AMOUNT</code></td><td>Set spending limit</td></tr>
-  </tbody>
-</table>
+<div class="callout callout-warning">
+  <div class="callout-title">⚠️ Important Notes</div>
+  <ul style="margin: 0; padding-left: 20px;">
+    <li>All commands require a funded wallet (USDC + ETH for gas)</li>
+    <li>Gas fees on Base are ~$0.001-0.01 per transaction</li>
+    <li>Ratings and registrations are <strong>permanent</strong> on-chain</li>
+    <li>Escrow funds are locked in the smart contract until release/refund</li>
+  </ul>
+</div>
         
         <h3>registerAgent(options)</h3>
         <p>Register your agent in the on-chain registry (ERC-8004).</p>
