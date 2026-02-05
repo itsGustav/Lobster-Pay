@@ -6,6 +6,7 @@
  */
 
 export { LobsterAgent } from './agent';
+export { MultiChainLobsterAgent } from './agent-multichain';
 export { createLobsterAgent, quickStart } from './easy';
 export * from './types';
 export { resolveUsername, registerUsername, getUsername, listUsernames } from './usernames';
@@ -21,6 +22,11 @@ export { splits } from './splits';
 export type { SplitRecipient, SplitResult } from './splits';
 export { gamification } from './gamification';
 export type { Badge, PlayerStats } from './gamification';
+
+// Multi-chain exports
+export * from './chains';
+export { X402Client, createX402Fetch } from './x402';
+export type { X402PaymentChallenge, X402PaymentProof } from './x402';
 
 // Default export for convenience
 export { LobsterAgent as default } from './agent';

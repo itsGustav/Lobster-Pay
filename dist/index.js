@@ -20,9 +20,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = exports.gamification = exports.splits = exports.invoices = exports.subscriptions = exports.getLeaderboard = exports.getStatsSummary = exports.recordEscrow = exports.recordTransfer = exports.loadStats = exports.stats = exports.getSupportedTokens = exports.getPrice = exports.executeSwap = exports.getSwapQuote = exports.listUsernames = exports.getUsername = exports.registerUsername = exports.resolveUsername = exports.quickStart = exports.createLobsterAgent = exports.LobsterAgent = void 0;
+exports.default = exports.createX402Fetch = exports.X402Client = exports.gamification = exports.splits = exports.invoices = exports.subscriptions = exports.getLeaderboard = exports.getStatsSummary = exports.recordEscrow = exports.recordTransfer = exports.loadStats = exports.stats = exports.getSupportedTokens = exports.getPrice = exports.executeSwap = exports.getSwapQuote = exports.listUsernames = exports.getUsername = exports.registerUsername = exports.resolveUsername = exports.quickStart = exports.createLobsterAgent = exports.MultiChainLobsterAgent = exports.LobsterAgent = void 0;
 var agent_1 = require("./agent");
 Object.defineProperty(exports, "LobsterAgent", { enumerable: true, get: function () { return agent_1.LobsterAgent; } });
+var agent_multichain_1 = require("./agent-multichain");
+Object.defineProperty(exports, "MultiChainLobsterAgent", { enumerable: true, get: function () { return agent_multichain_1.MultiChainLobsterAgent; } });
 var easy_1 = require("./easy");
 Object.defineProperty(exports, "createLobsterAgent", { enumerable: true, get: function () { return easy_1.createLobsterAgent; } });
 Object.defineProperty(exports, "quickStart", { enumerable: true, get: function () { return easy_1.quickStart; } });
@@ -52,6 +54,11 @@ var splits_1 = require("./splits");
 Object.defineProperty(exports, "splits", { enumerable: true, get: function () { return splits_1.splits; } });
 var gamification_1 = require("./gamification");
 Object.defineProperty(exports, "gamification", { enumerable: true, get: function () { return gamification_1.gamification; } });
+// Multi-chain exports
+__exportStar(require("./chains"), exports);
+var x402_1 = require("./x402");
+Object.defineProperty(exports, "X402Client", { enumerable: true, get: function () { return x402_1.X402Client; } });
+Object.defineProperty(exports, "createX402Fetch", { enumerable: true, get: function () { return x402_1.createX402Fetch; } });
 // Default export for convenience
 var agent_2 = require("./agent");
 Object.defineProperty(exports, "default", { enumerable: true, get: function () { return agent_2.LobsterAgent; } });

@@ -15,6 +15,17 @@
     "resolveJsonModule": true,
     "moduleResolution": "node"
   },
-  "include": ["lib/index.ts", "lib/agent.ts", "lib/easy.ts", "lib/types.ts", "lib/cli.ts", "lib/usernames.ts", "lib/swap.ts"],
+  "include": [
+    "lib/index.ts",
+    "lib/agent.ts",
+    "lib/agent-multichain.ts",
+    "lib/easy.ts",
+    "lib/types.ts",
+    "lib/cli.ts",
+    "lib/usernames.ts",
+    "lib/swap.ts",
+    "lib/x402.ts",
+    "lib/chains/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist", "docs", "api"]
 }
