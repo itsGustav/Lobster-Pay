@@ -2279,19 +2279,269 @@
           <a href="https://github.com/itsGustav/lobster-pay" class="btn btn-secondary btn-large">View on GitHub</a>
         </div>
         
-        <div class="hero-code">
-          <div class="code-header">
-            <span class="code-dot red"></span>
-            <span class="code-dot yellow"></span>
-            <span class="code-dot green"></span>
+        <!-- Animated Chat Demo -->
+        <div class="chat-demo" id="chatDemo">
+          <div class="chat-header">
+            <div class="chat-avatar">🦞</div>
+            <div class="chat-info">
+              <div class="chat-name">Pay Lobster</div>
+              <div class="chat-status"><span class="status-dot"></span> Online on Base</div>
+            </div>
+            <div class="chat-badge">Telegram</div>
           </div>
-          <div class="code-content">
-            <span class="code-comment"># Chat with your agent</span><br>
-            <span class="code-string">/tip</span> <span class="code-variable">@creator</span> <span class="code-number">5</span> <span class="code-keyword">USDC</span><br>
-            <span class="code-string">/donate</span> <span class="code-number">10</span> <span class="code-keyword">USDC</span><br>
-            <span class="code-string">/balance</span> <span class="code-comment">→ 💰 42.50 USDC</span>
+          <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be animated in -->
           </div>
+          <div class="chat-input">
+            <input type="text" placeholder="Type a command..." disabled id="chatInput">
+            <button class="chat-send" disabled>➤</button>
+          </div>
+          <button class="chat-replay" id="replayBtn" onclick="replayDemo()">↻ Replay</button>
         </div>
+        
+        <style>
+          .chat-demo {
+            background: #1a1a2e;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+          }
+          .chat-header {
+            background: linear-gradient(135deg, #635BFF 0%, #4B45C6 100%);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+          }
+          .chat-avatar {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+          }
+          .chat-info { flex: 1; }
+          .chat-name { font-weight: 600; color: white; font-size: 16px; }
+          .chat-status { font-size: 12px; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 6px; }
+          .status-dot { width: 8px; height: 8px; background: #00D4AA; border-radius: 50%; animation: pulse 2s infinite; }
+          .chat-badge { 
+            background: rgba(255,255,255,0.2); 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            font-size: 11px; 
+            color: white;
+            font-weight: 500;
+          }
+          .chat-messages {
+            padding: 20px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #0d0d1a;
+          }
+          .chat-msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: msgIn 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          .chat-msg.show {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          .chat-msg.user {
+            background: #635BFF;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+          }
+          .chat-msg.bot {
+            background: #2a2a3e;
+            color: #e0e0e0;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+          }
+          .chat-msg.bot .amount { color: #00D4AA; font-weight: 700; font-size: 18px; }
+          .chat-msg.bot .success { color: #00D4AA; }
+          .chat-msg.bot .hash { font-family: monospace; font-size: 11px; color: #888; word-break: break-all; }
+          .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: #2a2a3e;
+            border-radius: 18px;
+            width: fit-content;
+            align-self: flex-start;
+          }
+          .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #888;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+          }
+          .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+          .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+          @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+          }
+          @keyframes msgIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          .chat-input {
+            display: flex;
+            gap: 8px;
+            padding: 16px 20px;
+            background: #1a1a2e;
+            border-top: 1px solid #2a2a3e;
+          }
+          .chat-input input {
+            flex: 1;
+            background: #2a2a3e;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 24px;
+            color: white;
+            font-size: 14px;
+          }
+          .chat-input input::placeholder { color: #666; }
+          .chat-send {
+            width: 44px;
+            height: 44px;
+            background: #635BFF;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+          }
+          .chat-send:hover { transform: scale(1.1); }
+          .chat-replay {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(99, 91, 255, 0.2);
+            border: 1px solid rgba(99, 91, 255, 0.4);
+            color: #635BFF;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
+          .chat-replay.show { opacity: 1; }
+          .chat-replay:hover { background: rgba(99, 91, 255, 0.3); }
+          .lobster-rain {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: lobsterFall 2s ease-out forwards;
+          }
+          @keyframes lobsterFall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+          }
+          @media (max-width: 500px) {
+            .chat-demo { border-radius: 0; margin: 0 -16px; max-width: none; }
+            .chat-messages { min-height: 240px; }
+          }
+        </style>
+        
+        <script>
+          const demoMessages = [
+            { type: 'user', text: '/balance', delay: 800 },
+            { type: 'typing', delay: 600 },
+            { type: 'bot', text: '💰 <span class="amount">42.50 USDC</span><br><span style="color:#888;font-size:12px;">Base Mainnet • Updated now</span>', delay: 0 },
+            { type: 'user', text: '/tip @Gustav 5 USDC', delay: 1200 },
+            { type: 'typing', delay: 800 },
+            { type: 'bot', text: '🦞 <span class="success">Sent 5 USDC to @Gustav!</span><br><span class="hash">tx: 0x7f3a...8c2d</span>', delay: 0, celebrate: true },
+            { type: 'user', text: '/donate 10 USDC', delay: 1500 },
+            { type: 'typing', delay: 600 },
+            { type: 'bot', text: '🎉 <span class="success">Donation received!</span><br><span style="font-size:13px;">Thank you for supporting Pay Lobster!</span>', delay: 0, celebrate: true }
+          ];
+          
+          let demoRunning = false;
+          
+          async function runDemo() {
+            if (demoRunning) return;
+            demoRunning = true;
+            const container = document.getElementById('chatMessages');
+            const replayBtn = document.getElementById('replayBtn');
+            container.innerHTML = '';
+            replayBtn.classList.remove('show');
+            
+            for (const msg of demoMessages) {
+              await new Promise(r => setTimeout(r, msg.delay));
+              
+              if (msg.type === 'typing') {
+                const typing = document.createElement('div');
+                typing.className = 'typing-indicator';
+                typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+                container.appendChild(typing);
+                container.scrollTop = container.scrollHeight;
+                await new Promise(r => setTimeout(r, 1000));
+                typing.remove();
+              } else {
+                const div = document.createElement('div');
+                div.className = 'chat-msg ' + msg.type;
+                div.innerHTML = msg.text;
+                container.appendChild(div);
+                setTimeout(() => div.classList.add('show'), 50);
+                container.scrollTop = container.scrollHeight;
+                
+                if (msg.celebrate) {
+                  for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                      const lobster = document.createElement('div');
+                      lobster.className = 'lobster-rain';
+                      lobster.textContent = '🦞';
+                      lobster.style.left = (20 + Math.random() * 60) + '%';
+                      lobster.style.top = '0';
+                      document.getElementById('chatDemo').appendChild(lobster);
+                      setTimeout(() => lobster.remove(), 2000);
+                    }, i * 100);
+                  }
+                }
+              }
+            }
+            
+            await new Promise(r => setTimeout(r, 1000));
+            replayBtn.classList.add('show');
+            demoRunning = false;
+          }
+          
+          function replayDemo() {
+            runDemo();
+          }
+          
+          // Start demo when visible
+          const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+              setTimeout(runDemo, 500);
+              observer.disconnect();
+            }
+          }, { threshold: 0.5 });
+          observer.observe(document.getElementById('chatDemo'));
+        </script>
       </div>
     </div>
   </section>
