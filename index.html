@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pay Lobster 🦞 Payment Infrastructure for AI Agents</title>
-  <meta name="description" content="The Stripe for AI agents. Let your agent hire other agents, pay for APIs, and get paid for work — all without you lifting a finger. Built on Base.">
+  <meta name="description" content="USDC payments for AI agents. Your OpenClaw bot accepts tips, donations, and payments — right in chat. One skill install. Real USDC on Base.">
   <meta name="base:app_id" content="6983e7cb126d30a827fcf50f" />
   
   <!-- Favicon -->
@@ -2258,6 +2258,8 @@
     <div class="container">
       <div class="hero-content">
         <div class="hero-badge">
+          🦞 OpenClaw Skill
+          <span style="margin: 0 8px; color: var(--gray-600);">•</span>
           <a href="https://base.org" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: inherit;">
             <svg width="20" height="20" viewBox="0 0 111 111" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="55.5" cy="55.5" r="55.5" fill="#0052FF"/>
@@ -2268,12 +2270,12 @@
           <span style="margin: 0 8px; color: var(--gray-600);">•</span>
           Circle USDC Hackathon 2026
         </div>
-        <h1>The Stripe for<br><span class="gradient-text">AI Agents</span></h1>
+        <h1>USDC Payments for<br><span class="gradient-text">AI Agents</span></h1>
         <p class="hero-subtitle">
-          Your agent can hire other agents, pay for APIs, and get paid for work — all without you lifting a finger. Wallet setup in 3 lines. Sub-cent fees on Base.
+          Your OpenClaw bot accepts tips, donations, and payments — right in chat. One skill install. Real USDC on Base. Sub-cent fees.
         </p>
         <div class="hero-buttons">
-          <a href="#get-started" class="btn btn-primary btn-large">Get Started Free →</a>
+          <a href="#get-started" class="btn btn-primary btn-large">Install Skill →</a>
           <a href="https://github.com/itsGustav/lobster-pay" class="btn btn-secondary btn-large">View on GitHub</a>
         </div>
         
@@ -2284,10 +2286,10 @@
             <span class="code-dot green"></span>
           </div>
           <div class="code-content">
-            <span class="code-comment">// npm install pay-lobster</span><br>
-            <span class="code-keyword">import</span> { <span class="code-variable">quickStart</span> } <span class="code-keyword">from</span> <span class="code-string">'pay-lobster'</span>;<br><br>
-            <span class="code-keyword">const</span> <span class="code-variable">agent</span> = <span class="code-keyword">await</span> <span class="code-function">quickStart</span>({ circleApiKey });<br>
-            <span class="code-keyword">await</span> agent.<span class="code-function">send</span>(<span class="code-string">'0x...'</span>, <span class="code-number">10</span>); <span class="code-comment">// Send $10 USDC</span>
+            <span class="code-comment"># Chat with your agent</span><br>
+            <span class="code-string">/tip</span> <span class="code-variable">@creator</span> <span class="code-number">5</span> <span class="code-keyword">USDC</span><br>
+            <span class="code-string">/donate</span> <span class="code-number">10</span> <span class="code-keyword">USDC</span><br>
+            <span class="code-string">/balance</span> <span class="code-comment">→ 💰 42.50 USDC</span>
           </div>
         </div>
       </div>
