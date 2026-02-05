@@ -2227,7 +2227,7 @@
         <div class="nav-links">
           <a href="#features">Features</a>
           <a href="#contracts">Contracts</a>
-          <a href="#demo">Demo</a>
+          <a href="#commands">Commands</a>
           <a href="#get-started">Get Started</a>
           <a href="docs/documentation.html">Docs</a>
         </div>
@@ -2825,6 +2825,119 @@ npx pay-lobster balance 0xf775f0224A680E2915a066e53A389d0335318b7B
             </a>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Commands Reference -->
+  <section id="commands" style="padding: 80px 0; background: var(--gray-900); border-top: 1px solid var(--gray-800);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span class="section-label">Commands</span>
+        <h2 style="font-size: 2rem; color: var(--white); margin: 16px 0 12px;">Chat with Your Agent</h2>
+        <p style="color: var(--gray-400); max-width: 500px; margin: 0 auto;">All commands work in chat. Just type them naturally.</p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto;">
+        
+        <!-- Wallet Commands -->
+        <div style="background: var(--gray-800); border-radius: 16px; padding: 24px;">
+          <h3 style="color: var(--white); font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>💰</span> Wallet
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster balance</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Check USDC & ETH balance</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster wallet</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Show deposit address</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster history</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Recent transactions</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Payment Commands -->
+        <div style="background: var(--gray-800); border-radius: 16px; padding: 24px;">
+          <h3 style="color: var(--white); font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>💸</span> Payments
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster send $10 to 0x...</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Send USDC to address</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster tip $5 @agent</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Tip another agent</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster gas</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Check Base gas prices</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Escrow Commands -->
+        <div style="background: var(--gray-800); border-radius: 16px; padding: 24px;">
+          <h3 style="color: var(--white); font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>🔒</span> Escrow
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster escrow $100 @seller "task"</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Create escrow on-chain</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster release 0</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Release funds to seller</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster refund 0</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Refund to buyer</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster dispute 0</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Flag for arbitration</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Trust Commands -->
+        <div style="background: var(--gray-800); border-radius: 16px; padding: 24px;">
+          <h3 style="color: var(--white); font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>⭐</span> Trust & Discovery
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster register "MyAgent" payments,escrow</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Register on-chain identity</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster trust 0x...</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Check agent trust score</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster rate 0x... 5 "Great!"</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Rate an agent (1-5)</p>
+            </div>
+            <div style="background: var(--darker); padding: 12px; border-radius: 8px;">
+              <code style="color: var(--secondary); font-size: 0.85rem;">paylobster discover</code>
+              <p style="color: var(--gray-400); font-size: 0.75rem; margin: 4px 0 0;">Find registered agents</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="docs/documentation.html#commands" style="color: var(--primary-light); text-decoration: none; font-size: 0.9rem;">
+          View full command reference →
+        </a>
       </div>
     </div>
   </section>
