@@ -20,7 +20,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = exports.getLeaderboard = exports.getStatsSummary = exports.recordEscrow = exports.recordTransfer = exports.loadStats = exports.stats = exports.getSupportedTokens = exports.getPrice = exports.executeSwap = exports.getSwapQuote = exports.listUsernames = exports.getUsername = exports.registerUsername = exports.resolveUsername = exports.quickStart = exports.createLobsterAgent = exports.LobsterAgent = void 0;
+exports.default = exports.gamification = exports.splits = exports.invoices = exports.subscriptions = exports.getLeaderboard = exports.getStatsSummary = exports.recordEscrow = exports.recordTransfer = exports.loadStats = exports.stats = exports.getSupportedTokens = exports.getPrice = exports.executeSwap = exports.getSwapQuote = exports.listUsernames = exports.getUsername = exports.registerUsername = exports.resolveUsername = exports.quickStart = exports.createLobsterAgent = exports.LobsterAgent = void 0;
 var agent_1 = require("./agent");
 Object.defineProperty(exports, "LobsterAgent", { enumerable: true, get: function () { return agent_1.LobsterAgent; } });
 var easy_1 = require("./easy");
@@ -44,6 +44,14 @@ Object.defineProperty(exports, "recordTransfer", { enumerable: true, get: functi
 Object.defineProperty(exports, "recordEscrow", { enumerable: true, get: function () { return stats_1.recordEscrow; } });
 Object.defineProperty(exports, "getStatsSummary", { enumerable: true, get: function () { return stats_1.getStatsSummary; } });
 Object.defineProperty(exports, "getLeaderboard", { enumerable: true, get: function () { return stats_1.getLeaderboard; } });
+var subscriptions_1 = require("./subscriptions");
+Object.defineProperty(exports, "subscriptions", { enumerable: true, get: function () { return subscriptions_1.subscriptions; } });
+var invoices_1 = require("./invoices");
+Object.defineProperty(exports, "invoices", { enumerable: true, get: function () { return invoices_1.invoices; } });
+var splits_1 = require("./splits");
+Object.defineProperty(exports, "splits", { enumerable: true, get: function () { return splits_1.splits; } });
+var gamification_1 = require("./gamification");
+Object.defineProperty(exports, "gamification", { enumerable: true, get: function () { return gamification_1.gamification; } });
 // Default export for convenience
 var agent_2 = require("./agent");
 Object.defineProperty(exports, "default", { enumerable: true, get: function () { return agent_2.LobsterAgent; } });

@@ -21,6 +21,10 @@ import { analytics } from './analytics';
 import { resolveUsername, ResolvedAddress } from './usernames';
 import { executeSwap, getSwapQuote, SwapOptions, SwapResult, SwapQuote } from './swap';
 import { stats } from './stats';
+import { subscriptions, Subscription } from './subscriptions';
+import { invoices, Invoice } from './invoices';
+import { splits, SplitRecipient, SplitResult } from './splits';
+import { gamification } from './gamification';
 
 const BASE_RPC = 'https://mainnet.base.org';
 const USDC_BASE = CONTRACTS.usdc;
@@ -215,6 +219,10 @@ export class LobsterAgent {
       
       // Record in global stats
       stats.recordTransfer(this.signer.address, recipientAddress, options.amount, tx.hash);
+      
+      // Record gamification
+      const isTip = options.memo?.toLowerCase().includes('tip');
+      gamification.recordActivity(this.signer.address, isTip ? 'tip' : 'transfer', options.amount, { isTip });
 
       return {
         id: tx.hash,
@@ -642,5 +650,256 @@ export class LobsterAgent {
    */
   recordTransfer(from: string, to: string, amount: string, txHash: string) {
     return stats.recordTransfer(from, to, amount, txHash);
+  }
+
+  // ============================================
+  // SUBSCRIPTIONS
+  // ============================================
+
+  /**
+   * Create a recurring subscription
+   */
+  createSubscription(options: {
+    to: string;
+    toName?: string;
+    amount: string;
+    period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+    description?: string;
+    startNow?: boolean;
+  }): Subscription {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return subscriptions.create({
+      from: this.wallet.address,
+      ...options,
+    });
+  }
+
+  /**
+   * Get all subscriptions for this wallet
+   */
+  getSubscriptions() {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return subscriptions.getAll(this.wallet.address);
+  }
+
+  /**
+   * Get subscription by ID
+   */
+  getSubscription(id: string) {
+    return subscriptions.get(id);
+  }
+
+  /**
+   * Cancel a subscription
+   */
+  cancelSubscription(id: string): boolean {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return subscriptions.cancel(id, this.wallet.address);
+  }
+
+  /**
+   * Pause a subscription
+   */
+  pauseSubscription(id: string): boolean {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return subscriptions.pause(id, this.wallet.address);
+  }
+
+  /**
+   * Resume a subscription
+   */
+  resumeSubscription(id: string): boolean {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return subscriptions.resume(id, this.wallet.address);
+  }
+
+  /**
+   * Get subscriptions summary
+   */
+  getSubscriptionsSummary(): string {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return subscriptions.summary(this.wallet.address);
+  }
+
+  /**
+   * Process due subscriptions (call periodically)
+   */
+  async processDueSubscriptions(): Promise<{ processed: number; failed: number }> {
+    if (!this.signer) throw new Error('Signer required to process subscriptions');
+    
+    const due = subscriptions.getDue();
+    let processed = 0, failed = 0;
+    
+    for (const sub of due) {
+      try {
+        await this.transfer({ to: sub.to, amount: sub.amount, memo: `Subscription: ${sub.description || sub.id}` });
+        subscriptions.recordPayment(sub.id, 'processed');
+        processed++;
+      } catch (e: any) {
+        subscriptions.recordFailure(sub.id, e.message);
+        failed++;
+      }
+    }
+    
+    return { processed, failed };
+  }
+
+  // ============================================
+  // INVOICES
+  // ============================================
+
+  /**
+   * Create an invoice (request payment)
+   */
+  createInvoice(options: {
+    to: string;
+    toName?: string;
+    amount: string;
+    description: string;
+    reference?: string;
+    expiresInDays?: number;
+  }): Invoice {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return invoices.create({
+      from: this.wallet.address,
+      ...options,
+    });
+  }
+
+  /**
+   * Get all invoices for this wallet
+   */
+  getInvoices() {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return invoices.getAll(this.wallet.address);
+  }
+
+  /**
+   * Get invoice by ID
+   */
+  getInvoice(id: string) {
+    return invoices.get(id);
+  }
+
+  /**
+   * Pay an invoice
+   */
+  async payInvoice(id: string): Promise<{ txHash: string }> {
+    if (!this.signer) throw new Error('Signer required to pay invoices');
+    
+    const invoice = invoices.get(id);
+    if (!invoice) throw new Error(`Invoice not found: ${id}`);
+    if (invoice.status !== 'pending') throw new Error(`Invoice is ${invoice.status}`);
+    if (invoice.to.toLowerCase() !== this.wallet?.address?.toLowerCase()) {
+      throw new Error('This invoice is not for you');
+    }
+    
+    const tx = await this.transfer({ to: invoice.from, amount: invoice.amount, memo: `Invoice: ${invoice.id}` });
+    invoices.markPaid(id, tx.hash);
+    
+    return { txHash: tx.hash };
+  }
+
+  /**
+   * Decline an invoice
+   */
+  declineInvoice(id: string): boolean {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return invoices.decline(id, this.wallet.address);
+  }
+
+  /**
+   * Cancel an invoice (as creator)
+   */
+  cancelInvoice(id: string): boolean {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return invoices.cancel(id, this.wallet.address);
+  }
+
+  /**
+   * Get invoices summary
+   */
+  getInvoicesSummary(): string {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return invoices.summary(this.wallet.address);
+  }
+
+  // ============================================
+  // SPLIT PAYMENTS
+  // ============================================
+
+  /**
+   * Split payment to multiple recipients
+   * 
+   * @example
+   * // Equal split
+   * await agent.split('100', ['@alice', '@bob', '@charlie']);
+   * 
+   * // Percentage split
+   * await agent.split('100', ['@alice:50', '@bob:30', '@charlie:20']);
+   */
+  async split(totalAmount: string, recipients: string[] | SplitRecipient[], memo?: string): Promise<SplitResult> {
+    if (!this.signer) throw new Error('Signer required for split payments');
+    
+    const parsed = await splits.parse(recipients, totalAmount, this.provider);
+    const result = await splits.execute(this.signer, totalAmount, parsed, memo);
+    
+    // Record gamification
+    if (this.wallet?.address) {
+      gamification.recordActivity(this.wallet.address, 'split', totalAmount, { recipients: parsed.length });
+    }
+    
+    return result;
+  }
+
+  /**
+   * Preview a split (no execution)
+   */
+  async previewSplit(totalAmount: string, recipients: string[] | SplitRecipient[]): Promise<string> {
+    return splits.preview(totalAmount, recipients, this.provider);
+  }
+
+  // ============================================
+  // GAMIFICATION
+  // ============================================
+
+  /**
+   * Get your gamification profile (streaks, badges, level)
+   */
+  getProfile() {
+    if (!this.wallet?.address) throw new Error('Wallet not initialized');
+    return gamification.getProfile(this.wallet.address);
+  }
+
+  /**
+   * Get formatted profile
+   */
+  getProfileSummary(): string {
+    const profile = this.getProfile();
+    if (!profile) return 'No profile yet. Make a transaction to start!';
+    return gamification.formatProfile(profile);
+  }
+
+  /**
+   * Get streak info
+   */
+  getStreak(): string {
+    const profile = this.getProfile();
+    if (!profile) return 'No streak yet. Make a transaction to start!';
+    return gamification.formatStreak(profile);
+  }
+
+  /**
+   * Get gamification leaderboard
+   */
+  getGamificationLeaderboard(type: 'volume' | 'streak' | 'level' | 'badges' = 'volume', limit = 10) {
+    return gamification.getLeaderboard(type, limit);
+  }
+
+  /**
+   * Get all available badges
+   */
+  getAllBadges() {
+    return gamification.getAllBadges();
   }
 }

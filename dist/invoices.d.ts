@@ -1,41 +1,22 @@
 /**
- * Invoice & Payment Request System
- *
- * Generate, track, and manage USDC invoices and payment requests.
+ * Pay Lobster Invoices Module
+ * Payment requests between agents 🦞
  */
 export interface Invoice {
     id: string;
-    number: string;
-    status: 'draft' | 'sent' | 'viewed' | 'paid' | 'cancelled' | 'overdue';
-    from: {
-        name: string;
-        email?: string;
-        walletAddress: string;
-    };
-    to: {
-        name: string;
-        email?: string;
-        walletAddress?: string;
-    };
-    items: InvoiceItem[];
-    subtotal: string;
-    tax?: string;
-    taxRate?: number;
-    total: string;
-    currency: 'USDC';
-    paymentChain: string;
-    paymentAddress: string;
-    paymentLink?: string;
-    x402PaymentUrl?: string;
-    txHash?: string;
-    paidAt?: string;
-    paidAmount?: string;
-    memo?: string;
-    dueDate?: string;
+    from: string;
+    fromName?: string;
+    to: string;
+    toName?: string;
+    amount: string;
+    description: string;
+    status: 'pending' | 'paid' | 'declined' | 'expired' | 'cancelled';
     createdAt: string;
-    updatedAt: string;
-    sentAt?: string;
-    viewedAt?: string;
+    expiresAt?: string;
+    paidAt?: string;
+    paidTxHash?: string;
+    reference?: string;
+    items?: InvoiceItem[];
 }
 export interface InvoiceItem {
     description: string;
@@ -43,170 +24,67 @@ export interface InvoiceItem {
     unitPrice: string;
     total: string;
 }
-export interface PaymentRequest {
-    id: string;
-    type: 'one-time' | 'recurring';
+export interface InvoicesData {
+    invoices: Invoice[];
+}
+/**
+ * Create a new invoice
+ */
+export declare function createInvoice(options: {
+    from: string;
+    fromName?: string;
+    to: string;
+    toName?: string;
     amount: string;
     description: string;
-    fromName: string;
-    toAddress: string;
-    chain: string;
-    status: 'pending' | 'paid' | 'cancelled' | 'expired';
-    expiresAt?: string;
-    paymentLink: string;
-    createdAt: string;
-    paidAt?: string;
-    txHash?: string;
-}
-export interface RecurringPayment {
-    id: string;
-    name: string;
-    amount: string;
-    toAddress: string;
-    toName: string;
-    chain: string;
-    frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly';
-    nextPaymentDate: string;
-    startDate: string;
-    endDate?: string;
-    status: 'active' | 'paused' | 'cancelled' | 'completed';
-    walletId: string;
-    payments: {
-        date: string;
-        txHash: string;
-        amount: string;
-    }[];
-    createdAt: string;
-}
+    reference?: string;
+    items?: InvoiceItem[];
+    expiresInDays?: number;
+}): Invoice;
 /**
- * Invoice Manager
+ * Get invoice by ID
  */
-export declare class InvoiceManager {
-    private dataPath;
-    constructor(dataDir?: string);
-    private loadInvoices;
-    private saveInvoices;
-    /**
-     * Create a new invoice
-     */
-    create(params: {
-        from: Invoice['from'];
-        to: Invoice['to'];
-        items: {
-            description: string;
-            quantity: number;
-            unitPrice: string;
-        }[];
-        taxRate?: number;
-        memo?: string;
-        dueDate?: string;
-        chain?: string;
-    }): Promise<Invoice>;
-    /**
-     * Get invoice by ID or number
-     */
-    get(idOrNumber: string): Promise<Invoice | null>;
-    /**
-     * List invoices with optional filters
-     */
-    list(filters?: {
-        status?: Invoice['status'];
-        toName?: string;
-        fromDate?: string;
-        toDate?: string;
-    }): Promise<Invoice[]>;
-    /**
-     * Mark invoice as sent
-     */
-    markSent(id: string): Promise<Invoice | null>;
-    /**
-     * Mark invoice as paid
-     */
-    markPaid(id: string, txHash: string, amount?: string): Promise<Invoice | null>;
-    /**
-     * Cancel invoice
-     */
-    cancel(id: string): Promise<Invoice | null>;
-    /**
-     * Generate payment link for invoice
-     */
-    private generatePaymentLink;
-    /**
-     * Generate x402-enabled payment URL for invoice
-     * Returns a URL that triggers 402 Payment Required
-     */
-    private generateX402PaymentUrl;
-    /**
-     * Add x402 payment method to invoice
-     * Creates a payment-gated endpoint for this invoice
-     */
-    enableX402Payment(invoiceId: string, options?: {
-        baseUrl?: string;
-        expiryHours?: number;
-    }): Promise<string>;
-    /**
-     * Format invoice as text for messaging
-     */
-    formatInvoiceText(invoice: Invoice): string;
-    /**
-     * Check for overdue invoices
-     */
-    checkOverdue(): Promise<Invoice[]>;
-}
+export declare function getInvoice(id: string): Invoice | null;
 /**
- * Recurring Payment Manager
+ * Get all invoices for a wallet
  */
-export declare class RecurringPaymentManager {
-    private dataPath;
-    constructor(dataDir?: string);
-    private loadPayments;
-    private savePayments;
-    /**
-     * Schedule a recurring payment
-     */
-    schedule(params: {
-        name: string;
-        amount: string;
-        toAddress: string;
-        toName: string;
-        chain: string;
-        frequency: RecurringPayment['frequency'];
-        startDate?: string;
-        endDate?: string;
-        walletId: string;
-    }): Promise<RecurringPayment>;
-    /**
-     * Get all due payments
-     */
-    getDuePayments(): Promise<RecurringPayment[]>;
-    /**
-     * Record a payment execution
-     */
-    recordExecution(id: string, txHash: string): Promise<RecurringPayment | null>;
-    /**
-     * Pause recurring payment
-     */
-    pause(id: string): Promise<RecurringPayment | null>;
-    /**
-     * Resume recurring payment
-     */
-    resume(id: string): Promise<RecurringPayment | null>;
-    /**
-     * Cancel recurring payment
-     */
-    cancel(id: string): Promise<RecurringPayment | null>;
-    /**
-     * List all recurring payments
-     */
-    list(status?: RecurringPayment['status']): Promise<RecurringPayment[]>;
-    /**
-     * Calculate next payment date based on frequency
-     */
-    private calculateNextDate;
-}
-declare const _default: {
-    InvoiceManager: typeof InvoiceManager;
-    RecurringPaymentManager: typeof RecurringPaymentManager;
+export declare function getInvoices(wallet: string): {
+    sent: Invoice[];
+    received: Invoice[];
 };
-export default _default;
+/**
+ * Get pending invoices to pay
+ */
+export declare function getPendingInvoices(wallet: string): Invoice[];
+/**
+ * Mark invoice as paid
+ */
+export declare function markPaid(id: string, txHash: string): boolean;
+/**
+ * Decline an invoice
+ */
+export declare function declineInvoice(id: string, wallet: string): boolean;
+/**
+ * Cancel an invoice (by creator)
+ */
+export declare function cancelInvoice(id: string, wallet: string): boolean;
+/**
+ * Format invoice for display
+ */
+export declare function formatInvoice(invoice: Invoice, perspective: 'sender' | 'receiver'): string;
+/**
+ * Get invoices summary
+ */
+export declare function getInvoicesSummary(wallet: string): string;
+export declare const invoices: {
+    create: typeof createInvoice;
+    get: typeof getInvoice;
+    getAll: typeof getInvoices;
+    getPending: typeof getPendingInvoices;
+    markPaid: typeof markPaid;
+    decline: typeof declineInvoice;
+    cancel: typeof cancelInvoice;
+    format: typeof formatInvoice;
+    summary: typeof getInvoicesSummary;
+};
 //# sourceMappingURL=invoices.d.ts.map

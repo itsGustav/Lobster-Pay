@@ -5,6 +5,9 @@
 import type { LobsterConfig, Wallet, Transfer, Escrow, TrustScore, Agent, TransferOptions, EscrowOptions, DiscoverOptions, AutonomousConfig } from './types';
 import { SwapOptions, SwapResult, SwapQuote } from './swap';
 import { stats } from './stats';
+import { Subscription } from './subscriptions';
+import { Invoice } from './invoices';
+import { SplitRecipient, SplitResult } from './splits';
 export declare class LobsterAgent {
     private config;
     private wallet?;
@@ -173,5 +176,131 @@ export declare class LobsterAgent {
      * Record a transfer manually (for external tracking)
      */
     recordTransfer(from: string, to: string, amount: string, txHash: string): import("./stats").PayLobsterStats;
+    /**
+     * Create a recurring subscription
+     */
+    createSubscription(options: {
+        to: string;
+        toName?: string;
+        amount: string;
+        period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+        description?: string;
+        startNow?: boolean;
+    }): Subscription;
+    /**
+     * Get all subscriptions for this wallet
+     */
+    getSubscriptions(): {
+        paying: Subscription[];
+        receiving: Subscription[];
+    };
+    /**
+     * Get subscription by ID
+     */
+    getSubscription(id: string): Subscription;
+    /**
+     * Cancel a subscription
+     */
+    cancelSubscription(id: string): boolean;
+    /**
+     * Pause a subscription
+     */
+    pauseSubscription(id: string): boolean;
+    /**
+     * Resume a subscription
+     */
+    resumeSubscription(id: string): boolean;
+    /**
+     * Get subscriptions summary
+     */
+    getSubscriptionsSummary(): string;
+    /**
+     * Process due subscriptions (call periodically)
+     */
+    processDueSubscriptions(): Promise<{
+        processed: number;
+        failed: number;
+    }>;
+    /**
+     * Create an invoice (request payment)
+     */
+    createInvoice(options: {
+        to: string;
+        toName?: string;
+        amount: string;
+        description: string;
+        reference?: string;
+        expiresInDays?: number;
+    }): Invoice;
+    /**
+     * Get all invoices for this wallet
+     */
+    getInvoices(): {
+        sent: Invoice[];
+        received: Invoice[];
+    };
+    /**
+     * Get invoice by ID
+     */
+    getInvoice(id: string): Invoice;
+    /**
+     * Pay an invoice
+     */
+    payInvoice(id: string): Promise<{
+        txHash: string;
+    }>;
+    /**
+     * Decline an invoice
+     */
+    declineInvoice(id: string): boolean;
+    /**
+     * Cancel an invoice (as creator)
+     */
+    cancelInvoice(id: string): boolean;
+    /**
+     * Get invoices summary
+     */
+    getInvoicesSummary(): string;
+    /**
+     * Split payment to multiple recipients
+     *
+     * @example
+     * // Equal split
+     * await agent.split('100', ['@alice', '@bob', '@charlie']);
+     *
+     * // Percentage split
+     * await agent.split('100', ['@alice:50', '@bob:30', '@charlie:20']);
+     */
+    split(totalAmount: string, recipients: string[] | SplitRecipient[], memo?: string): Promise<SplitResult>;
+    /**
+     * Preview a split (no execution)
+     */
+    previewSplit(totalAmount: string, recipients: string[] | SplitRecipient[]): Promise<string>;
+    /**
+     * Get your gamification profile (streaks, badges, level)
+     */
+    getProfile(): import("./gamification").PlayerStats;
+    /**
+     * Get formatted profile
+     */
+    getProfileSummary(): string;
+    /**
+     * Get streak info
+     */
+    getStreak(): string;
+    /**
+     * Get gamification leaderboard
+     */
+    getGamificationLeaderboard(type?: 'volume' | 'streak' | 'level' | 'badges', limit?: number): {
+        rank: number;
+        address: string;
+        value: string | number;
+        level: number;
+        badges: number;
+    }[];
+    /**
+     * Get all available badges
+     */
+    getAllBadges(): import("./gamification").Badge[];
 }
 //# sourceMappingURL=agent.d.ts.map
