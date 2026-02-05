@@ -452,6 +452,7 @@
           <div class="sidebar-title">Chat Commands</div>
           <ul class="sidebar-links">
             <li><a href="#cmd-wallet">Wallet Commands</a></li>
+            <li><a href="#cmd-card">Card Payments (NEW)</a></li>
             <li><a href="#cmd-payments">Payment Commands</a></li>
             <li><a href="#cmd-escrow">Escrow Commands</a></li>
             <li><a href="#cmd-trust">Trust Commands</a></li>
@@ -670,8 +671,52 @@ console.log(`Tx: ${tx.hash}`);</code></pre>
               <td>Current Base gas prices</td>
               <td>⚡ Low: 0.001 gwei (~$0.001)</td>
             </tr>
+            <tr>
+              <td><code>paylobster fund $100</code></td>
+              <td>Fund wallet with card (Coinbase)</td>
+              <td>Opens Coinbase Onramp URL</td>
+            </tr>
           </tbody>
         </table>
+
+        <h3 id="cmd-card">💳 Card Payments (NEW in v2.1)</h3>
+        <p>Fund wallets with debit/credit cards via Coinbase Onramp. ~1.5% fees (industry lowest).</p>
+        <table>
+          <thead><tr><th>Method</th><th>Description</th><th>Availability</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Debit/Credit Cards</td>
+              <td>Visa, Mastercard, etc.</td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Apple Pay</td>
+              <td>Instant funding</td>
+              <td>US only</td>
+            </tr>
+            <tr>
+              <td>Bank Transfer</td>
+              <td>ACH, SEPA, etc.</td>
+              <td>Varies by region</td>
+            </tr>
+            <tr>
+              <td>Coinbase Balance</td>
+              <td>Use existing Coinbase funds</td>
+              <td>Coinbase users</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>CLI Usage</h4>
+        <pre><code>paylobster fund 100    # Opens URL for $100 USDC purchase</code></pre>
+
+        <h4>SDK Usage</h4>
+        <pre><code>// Generate Coinbase Onramp URL
+const { url } = await agent.fundWithCard(100);
+console.log('Click to add funds:', url);
+
+// Simple URL (no CDP credentials needed)
+const simpleUrl = agent.getSimpleOnrampUrl(100, 'USDC');</code></pre>
 
         <h3 id="cmd-payments">💸 Payment Commands</h3>
         <table>

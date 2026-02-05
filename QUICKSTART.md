@@ -71,22 +71,22 @@ const agent = await createLobsterAgent({
 
 ```bash
 # Check balance
-npm run balance
+paylobster balance
+
+# Fund wallet with card (NEW in v2.1!)
+paylobster fund 100    # Opens Coinbase Onramp for $100
 
 # Send USDC
-npx ts-node scripts/usdc-cli.ts send <amount> to <address>
+paylobster send 10 to 0x...
 
 # Get receive address
-npm run receive
+paylobster receive
 
-# Create invoice
-npx ts-node scripts/usdc-cli.ts invoice create
+# Swap tokens
+paylobster swap 0.1 ETH to USDC
 
-# Pay via x402
-npx ts-node scripts/usdc-cli.ts x402 pay <url>
-
-# Check status (balance + trust score)
-npx ts-node scripts/usdc-cli.ts status
+# Check status
+paylobster stats
 ```
 
 ## What's Next?
