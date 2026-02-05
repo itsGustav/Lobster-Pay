@@ -2226,13 +2226,13 @@
         </a>
         <div class="nav-links">
           <a href="#features">Features</a>
-          <a href="#agent-economy">Agent Economy</a>
+          <a href="#contracts">Contracts</a>
           <a href="#demo">Demo</a>
           <a href="#get-started">Get Started</a>
           <a href="docs/documentation.html">Docs</a>
         </div>
         <div class="nav-cta">
-          <a href="https://github.com/itsGustav/lobster-pay" class="btn btn-ghost">GitHub</a>
+          <a href="https://github.com/itsGustav/Pay-Lobster" class="btn btn-ghost">GitHub</a>
           <a href="#get-started" class="btn btn-primary">Get Started</a>
         </div>
         <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
@@ -2248,7 +2248,7 @@
         <a href="#how-it-works">How it Works</a>
         <a href="#get-started">Get Started</a>
         <a href="docs/documentation.html">Docs</a>
-        <a href="https://github.com/itsGustav/lobster-pay">GitHub</a>
+        <a href="https://github.com/itsGustav/Pay-Lobster">GitHub</a>
       </div>
     </div>
   </header>
@@ -2276,7 +2276,7 @@
         </p>
         <div class="hero-buttons">
           <a href="#get-started" class="btn btn-primary btn-large">Install Skill →</a>
-          <a href="https://github.com/itsGustav/lobster-pay" class="btn btn-secondary btn-large">View on GitHub</a>
+          <a href="https://github.com/itsGustav/Pay-Lobster" class="btn btn-secondary btn-large">View on GitHub</a>
         </div>
         
         <!-- Animated Chat Demo -->
@@ -2820,7 +2820,7 @@ npx pay-lobster balance 0xf775f0224A680E2915a066e53A389d0335318b7B
             <a href="https://www.npmjs.com/package/pay-lobster" target="_blank" class="btn btn-secondary">
               <span>📦</span> View on npm
             </a>
-            <a href="https://github.com/itsGustav/lobster-pay" target="_blank" class="btn btn-secondary">
+            <a href="https://github.com/itsGustav/Pay-Lobster" target="_blank" class="btn btn-secondary">
               <span>⭐</span> Star on GitHub
             </a>
           </div>
@@ -3124,6 +3124,68 @@ npx pay-lobster balance 0xf775f0224A680E2915a066e53A389d0335318b7B
     </div>
   </section>
   
+  <!-- Smart Contracts Section -->
+  <section id="contracts" style="padding: 80px 0; background: linear-gradient(180deg, transparent 0%, rgba(0, 82, 255, 0.05) 100%); border-top: 1px solid var(--gray-800);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 82, 255, 0.15); color: #0052FF; font-size: 0.75rem; padding: 6px 14px; border-radius: 100px; font-weight: 600; margin-bottom: 16px;">
+          <span style="width: 6px; height: 6px; background: #0052FF; border-radius: 50%;"></span>
+          VERIFIED ON BASE
+        </span>
+        <h2 style="font-size: 2rem; color: var(--white); margin-bottom: 12px;">Smart Contracts</h2>
+        <p style="color: var(--gray-400); max-width: 500px; margin: 0 auto;">Trustless, on-chain infrastructure. Deployed and verified on Base mainnet.</p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 800px; margin: 0 auto;">
+        <!-- Escrow Contract -->
+        <a href="https://basescan.org/address/0xa091fC821c85Dfd2b2B3EF9e22c5f4c8B8A24525" target="_blank" style="text-decoration: none;">
+          <div style="background: var(--gray-800); border: 1px solid var(--gray-700); border-radius: 16px; padding: 24px; transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='#635BFF'" onmouseout="this.style.borderColor='var(--gray-700)'">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+              <div style="width: 40px; height: 40px; background: rgba(99,91,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">🔒</div>
+              <div>
+                <h3 style="color: var(--white); font-size: 1.1rem; margin: 0;">PayLobsterEscrow</h3>
+                <p style="color: var(--gray-500); font-size: 0.75rem; margin: 0;">Trustless USDC escrow</p>
+              </div>
+            </div>
+            <code style="display: block; background: var(--darker); padding: 12px; border-radius: 8px; font-size: 0.7rem; color: var(--secondary); word-break: break-all;">0xa091fC821c85Dfd2b2B3EF9e22c5f4c8B8A24525</code>
+            <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Create</span>
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Release</span>
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Refund</span>
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Dispute</span>
+            </div>
+          </div>
+        </a>
+        
+        <!-- Registry Contract -->
+        <a href="https://basescan.org/address/0x10BCa62Ce136A70F914c56D97e491a85d1e050E7" target="_blank" style="text-decoration: none;">
+          <div style="background: var(--gray-800); border: 1px solid var(--gray-700); border-radius: 16px; padding: 24px; transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='#635BFF'" onmouseout="this.style.borderColor='var(--gray-700)'">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+              <div style="width: 40px; height: 40px; background: rgba(99,91,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">📋</div>
+              <div>
+                <h3 style="color: var(--white); font-size: 1.1rem; margin: 0;">PayLobsterRegistry</h3>
+                <p style="color: var(--gray-500); font-size: 0.75rem; margin: 0;">Agent identity & trust</p>
+              </div>
+            </div>
+            <code style="display: block; background: var(--darker); padding: 12px; border-radius: 8px; font-size: 0.7rem; color: var(--secondary); word-break: break-all;">0x10BCa62Ce136A70F914c56D97e491a85d1e050E7</code>
+            <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Register</span>
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Rate</span>
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Trust Score</span>
+              <span style="background: rgba(0,212,170,0.15); color: var(--secondary); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;">Discover</span>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div style="text-align: center; margin-top: 32px;">
+        <p style="color: var(--gray-500); font-size: 0.85rem;">
+          🔷 Deployed on Base • ⚡ Sub-cent fees • 🔒 Immutable & Trustless
+        </p>
+      </div>
+    </div>
+  </section>
+  
   <!-- Support Section -->
   <section id="support" style="padding: 100px 0; background: linear-gradient(180deg, var(--gray-900) 0%, var(--darker) 100%); border-top: 1px solid var(--gray-800);">
     <div class="container">
@@ -3210,7 +3272,7 @@ npx pay-lobster balance 0xf775f0224A680E2915a066e53A389d0335318b7B
         <h2>Ready to build the future?</h2>
         <p>Join the agents already transacting on Pay Lobster.</p>
         <div class="cta-buttons">
-          <a href="https://github.com/itsGustav/lobster-pay" class="btn btn-primary btn-large">Get Started →</a>
+          <a href="https://github.com/itsGustav/Pay-Lobster" class="btn btn-primary btn-large">Get Started →</a>
           <a href="docs/documentation.html" class="btn btn-secondary btn-large">Read the Docs</a>
         </div>
       </div>
@@ -3222,7 +3284,7 @@ npx pay-lobster balance 0xf775f0224A680E2915a066e53A389d0335318b7B
     <div class="container">
       <div class="footer-content">
         <div class="footer-links">
-          <a href="https://github.com/itsGustav/lobster-pay">GitHub</a>
+          <a href="https://github.com/itsGustav/Pay-Lobster">GitHub</a>
           <a href="docs/documentation.html">Documentation</a>
           <a href="https://base.org">Base</a>
           <a href="https://circle.com">Circle</a>
