@@ -20,7 +20,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = exports.createX402Fetch = exports.X402Client = exports.gamification = exports.splits = exports.invoices = exports.subscriptions = exports.getLeaderboard = exports.getStatsSummary = exports.recordEscrow = exports.recordTransfer = exports.loadStats = exports.stats = exports.getSupportedTokens = exports.getPrice = exports.executeSwap = exports.getSwapQuote = exports.listUsernames = exports.getUsername = exports.registerUsername = exports.resolveUsername = exports.quickStart = exports.createLobsterAgent = exports.MultiChainLobsterAgent = exports.LobsterAgent = void 0;
+exports.default = exports.createX402Fetch = exports.X402Client = exports.generateOnrampUrl = exports.getOnrampSession = exports.createOnrampUrl = exports.onramp = exports.gamification = exports.splits = exports.invoices = exports.subscriptions = exports.getLeaderboard = exports.getStatsSummary = exports.recordEscrow = exports.recordTransfer = exports.loadStats = exports.stats = exports.getSupportedTokens = exports.getPrice = exports.executeSwap = exports.getSwapQuote = exports.listUsernames = exports.getUsername = exports.registerUsername = exports.resolveUsername = exports.quickStart = exports.createLobsterAgent = exports.MultiChainLobsterAgent = exports.LobsterAgent = void 0;
 var agent_1 = require("./agent");
 Object.defineProperty(exports, "LobsterAgent", { enumerable: true, get: function () { return agent_1.LobsterAgent; } });
 var agent_multichain_1 = require("./agent-multichain");
@@ -54,6 +54,11 @@ var splits_1 = require("./splits");
 Object.defineProperty(exports, "splits", { enumerable: true, get: function () { return splits_1.splits; } });
 var gamification_1 = require("./gamification");
 Object.defineProperty(exports, "gamification", { enumerable: true, get: function () { return gamification_1.gamification; } });
+var onramp_1 = require("./onramp");
+Object.defineProperty(exports, "onramp", { enumerable: true, get: function () { return onramp_1.onramp; } });
+Object.defineProperty(exports, "createOnrampUrl", { enumerable: true, get: function () { return onramp_1.createOnrampUrl; } });
+Object.defineProperty(exports, "getOnrampSession", { enumerable: true, get: function () { return onramp_1.getOnrampSession; } });
+Object.defineProperty(exports, "generateOnrampUrl", { enumerable: true, get: function () { return onramp_1.generateOnrampUrl; } });
 // Multi-chain exports
 __exportStar(require("./chains"), exports);
 var x402_1 = require("./x402");

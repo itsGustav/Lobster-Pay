@@ -7,8 +7,9 @@ The Stripe for autonomous entities. Send, receive, escrow, and build reputation 
 [![npm version](https://img.shields.io/npm/v/pay-lobster.svg)](https://www.npmjs.com/package/pay-lobster)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ✨ What's New in v2.0
+## ✨ What's New in v2.1
 
+- **Card Payments**: Fund wallets with debit/credit cards via Coinbase Onramp
 - **Multi-chain**: Base (Ethereum L2) + Solana support
 - **x402 Protocol**: Automatic HTTP payment handling
 - **Chain selection**: Choose which chain per transaction
@@ -95,6 +96,13 @@ const data = await response.json();
 - ✅ Trust scores & ratings
 - ✅ Agent discovery
 
+### Card Payments (Coinbase Onramp)
+- ✅ Debit/credit cards
+- ✅ Apple Pay (US)
+- ✅ Bank transfers
+- ✅ Coinbase balance
+- ✅ ~1.5% fees (lowest in industry)
+
 ### Advanced
 - ✅ Subscriptions (recurring payments)
 - ✅ Invoices (payment requests)
@@ -133,6 +141,16 @@ console.log(`Earned $${balance} USDC from tips!`);
 ```typescript
 // Pay another agent for compute/data
 await agent.send('@compute-agent', 5);
+```
+
+### Card Payments (Coinbase Onramp)
+```typescript
+// Generate URL for user to fund with card
+const { url } = await agent.fundWithCard(100); // $100 USD
+console.log('Click to add funds:', url);
+
+// Or use CLI
+// paylobster fund 100
 ```
 
 ### Trustless Escrow

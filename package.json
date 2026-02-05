@@ -1,6 +1,6 @@
 {
   "name": "pay-lobster",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Payment infrastructure for AI agents - The Stripe for autonomous agents. Send, receive, and escrow USDC on Base.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,6 +26,7 @@
     "@solana/spl-token": "^0.4.14",
     "@solana/web3.js": "^1.98.4",
     "ethers": "^6.9.0",
+    "jose": "^5.10.0",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {

@@ -25,6 +25,7 @@ import { subscriptions, Subscription } from './subscriptions';
 import { invoices, Invoice } from './invoices';
 import { splits, SplitRecipient, SplitResult } from './splits';
 import { gamification } from './gamification';
+import { onramp, OnrampResult, OnrampConfig } from './onramp';
 
 const BASE_RPC = 'https://mainnet.base.org';
 const USDC_BASE = CONTRACTS.usdc;
@@ -961,5 +962,58 @@ export class LobsterAgent {
    */
   getAllBadges() {
     return gamification.getAllBadges();
+  }
+
+  // ============================================
+  // COINBASE ONRAMP (Card Payments)
+  // ============================================
+
+  /**
+   * Generate a URL for users to fund their wallet with a card
+   * Uses Coinbase Onramp - supports debit/credit cards, Apple Pay, bank transfers
+   * 
+   * @example
+   * ```typescript
+   * const { url } = await agent.fundWithCard(100); // $100 USD
+   * console.log('Click to add funds:', url);
+   * ```
+   */
+  async fundWithCard(amount: number, options?: {
+    asset?: string;
+    redirectUrl?: string;
+  }): Promise<OnrampResult> {
+    const address = this.wallet?.address || this.signer?.address;
+    if (!address) throw new Error('Wallet not initialized');
+
+    console.log(`🦞 Generating Coinbase Onramp URL for $${amount}...`);
+    
+    const result = await onramp.fundWithCard({
+      address,
+      amount,
+      asset: options?.asset || 'USDC',
+      redirectUrl: options?.redirectUrl
+    });
+
+    console.log(`✅ Onramp URL ready: ${result.url.slice(0, 60)}...`);
+    
+    return result;
+  }
+
+  /**
+   * Get a simple onramp URL without server-side session
+   * Less secure but works without CDP credentials
+   */
+  getSimpleOnrampUrl(amount: number, asset: string = 'USDC'): string {
+    const address = this.wallet?.address || this.signer?.address;
+    if (!address) throw new Error('Wallet not initialized');
+
+    return onramp.getSimpleUrl({ address, amount, asset });
+  }
+
+  /**
+   * Check onramp transaction status
+   */
+  async getOnrampStatus(partnerUserId: string): Promise<any> {
+    return onramp.getStatus(partnerUserId);
   }
 }

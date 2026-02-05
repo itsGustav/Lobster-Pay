@@ -15,6 +15,7 @@ const subscriptions_1 = require("./subscriptions");
 const invoices_1 = require("./invoices");
 const splits_1 = require("./splits");
 const gamification_1 = require("./gamification");
+const onramp_1 = require("./onramp");
 const BASE_RPC = 'https://mainnet.base.org';
 const USDC_BASE = contracts_1.CONTRACTS.usdc;
 class LobsterAgent {
@@ -822,6 +823,49 @@ class LobsterAgent {
      */
     getAllBadges() {
         return gamification_1.gamification.getAllBadges();
+    }
+    // ============================================
+    // COINBASE ONRAMP (Card Payments)
+    // ============================================
+    /**
+     * Generate a URL for users to fund their wallet with a card
+     * Uses Coinbase Onramp - supports debit/credit cards, Apple Pay, bank transfers
+     *
+     * @example
+     * ```typescript
+     * const { url } = await agent.fundWithCard(100); // $100 USD
+     * console.log('Click to add funds:', url);
+     * ```
+     */
+    async fundWithCard(amount, options) {
+        const address = this.wallet?.address || this.signer?.address;
+        if (!address)
+            throw new Error('Wallet not initialized');
+        console.log(`🦞 Generating Coinbase Onramp URL for $${amount}...`);
+        const result = await onramp_1.onramp.fundWithCard({
+            address,
+            amount,
+            asset: options?.asset || 'USDC',
+            redirectUrl: options?.redirectUrl
+        });
+        console.log(`✅ Onramp URL ready: ${result.url.slice(0, 60)}...`);
+        return result;
+    }
+    /**
+     * Get a simple onramp URL without server-side session
+     * Less secure but works without CDP credentials
+     */
+    getSimpleOnrampUrl(amount, asset = 'USDC') {
+        const address = this.wallet?.address || this.signer?.address;
+        if (!address)
+            throw new Error('Wallet not initialized');
+        return onramp_1.onramp.getSimpleUrl({ address, amount, asset });
+    }
+    /**
+     * Check onramp transaction status
+     */
+    async getOnrampStatus(partnerUserId) {
+        return onramp_1.onramp.getStatus(partnerUserId);
     }
 }
 exports.LobsterAgent = LobsterAgent;

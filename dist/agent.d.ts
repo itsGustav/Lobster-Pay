@@ -8,6 +8,7 @@ import { stats } from './stats';
 import { Subscription } from './subscriptions';
 import { Invoice } from './invoices';
 import { SplitRecipient, SplitResult } from './splits';
+import { OnrampResult } from './onramp';
 export declare class LobsterAgent {
     private config;
     private wallet?;
@@ -310,5 +311,28 @@ export declare class LobsterAgent {
      * Get all available badges
      */
     getAllBadges(): import("./gamification").Badge[];
+    /**
+     * Generate a URL for users to fund their wallet with a card
+     * Uses Coinbase Onramp - supports debit/credit cards, Apple Pay, bank transfers
+     *
+     * @example
+     * ```typescript
+     * const { url } = await agent.fundWithCard(100); // $100 USD
+     * console.log('Click to add funds:', url);
+     * ```
+     */
+    fundWithCard(amount: number, options?: {
+        asset?: string;
+        redirectUrl?: string;
+    }): Promise<OnrampResult>;
+    /**
+     * Get a simple onramp URL without server-side session
+     * Less secure but works without CDP credentials
+     */
+    getSimpleOnrampUrl(amount: number, asset?: string): string;
+    /**
+     * Check onramp transaction status
+     */
+    getOnrampStatus(partnerUserId: string): Promise<any>;
 }
 //# sourceMappingURL=agent.d.ts.map

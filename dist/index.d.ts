@@ -21,6 +21,8 @@ export { splits } from './splits';
 export type { SplitRecipient, SplitResult } from './splits';
 export { gamification } from './gamification';
 export type { Badge, PlayerStats } from './gamification';
+export { onramp, createOnrampUrl, getOnrampSession, generateOnrampUrl } from './onramp';
+export type { OnrampResult, OnrampConfig, OnrampSession, OnrampUrlParams, OnrampSessionParams } from './onramp';
 export * from './chains';
 export { X402Client, createX402Fetch } from './x402';
 export type { X402PaymentChallenge, X402PaymentProof } from './x402';

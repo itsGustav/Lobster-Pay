@@ -22,6 +22,8 @@ export { splits } from './splits';
 export type { SplitRecipient, SplitResult } from './splits';
 export { gamification } from './gamification';
 export type { Badge, PlayerStats } from './gamification';
+export { onramp, createOnrampUrl, getOnrampSession, generateOnrampUrl } from './onramp';
+export type { OnrampResult, OnrampConfig, OnrampSession, OnrampUrlParams, OnrampSessionParams } from './onramp';
 
 // Multi-chain exports
 export * from './chains';

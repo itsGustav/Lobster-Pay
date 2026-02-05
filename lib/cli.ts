@@ -11,6 +11,7 @@ import * as readline from 'readline';
 import { ethers } from 'ethers';
 import { getSwapQuote, executeSwap } from './swap';
 import { stats } from './stats';
+import { onramp } from './onramp';
 
 // Colors for terminal output
 const colors = {
@@ -319,6 +320,7 @@ ${c.bright}COMMANDS${c.reset}
   ${c.cyan}balance${c.reset}               Check USDC balance
   ${c.cyan}send <amount> <to>${c.reset}    Send USDC to address or agent
   ${c.cyan}receive${c.reset}               Show your wallet address
+  ${c.cyan}fund <amount>${c.reset}         Fund wallet with card (Coinbase Onramp)
   ${c.cyan}swap <amt> <from> to <to>${c.reset}  Swap tokens (ETH/USDC)
   ${c.cyan}quote <from> <to>${c.reset}     Get swap quote
   ${c.cyan}escrow create${c.reset}         Create new escrow
@@ -615,6 +617,71 @@ function formatNumber(num: string | number): string {
   return n.toFixed(2);
 }
 
+// Handle fund/onramp command: paylobster fund 100
+async function handleFund(args: string[]): Promise<void> {
+  const config = loadConfig();
+  
+  if (!config.privateKey) {
+    console.log(`${c.red}✗${c.reset} No wallet configured. Run ${c.cyan}paylobster setup${c.reset} first.`);
+    return;
+  }
+  
+  const address = getAddress(config.privateKey);
+  const amount = args[0] ? parseFloat(args[0]) : 0;
+  
+  if (!amount || amount < 5) {
+    console.log(`
+${c.bright}Fund Your Wallet${c.reset} - Add USDC with a card via Coinbase Pay
+
+${c.bright}USAGE${c.reset}
+  paylobster fund <amount>
+
+${c.bright}EXAMPLES${c.reset}
+  ${c.cyan}paylobster fund 100${c.reset}     ${c.dim}Fund wallet with $100 USD${c.reset}
+  ${c.cyan}paylobster fund 50${c.reset}      ${c.dim}Fund wallet with $50 USD${c.reset}
+
+${c.bright}PAYMENT METHODS${c.reset}
+  • Debit/Credit card
+  • Apple Pay (US)
+  • Bank transfer
+  • Existing Coinbase balance
+
+${c.bright}NOTE${c.reset}
+  Minimum amount: ${c.yellow}$5 USD${c.reset}
+  Fees: ~1.5% via Coinbase Onramp
+`);
+    return;
+  }
+  
+  console.log(`\n${c.dim}🦞 Generating Coinbase Onramp URL...${c.reset}\n`);
+  
+  try {
+    // Use simple URL (no CDP credentials needed)
+    const url = onramp.getSimpleUrl({
+      address,
+      amount,
+      asset: 'USDC'
+    });
+    
+    console.log(`${c.cyan}┌─────────────────────────────────────────────────┐${c.reset}`);
+    console.log(`${c.cyan}│${c.reset}     💳 ${c.bright}FUND YOUR WALLET${c.reset}                       ${c.cyan}│${c.reset}`);
+    console.log(`${c.cyan}├─────────────────────────────────────────────────┤${c.reset}`);
+    console.log(`${c.cyan}│${c.reset}  Amount: ${c.green}$${amount} USD → USDC${c.reset}                    ${c.cyan}│${c.reset}`);
+    console.log(`${c.cyan}│${c.reset}  To:     ${c.dim}${address.slice(0,10)}...${address.slice(-6)}${c.reset}          ${c.cyan}│${c.reset}`);
+    console.log(`${c.cyan}├─────────────────────────────────────────────────┤${c.reset}`);
+    console.log(`${c.cyan}│${c.reset}  ${c.bright}Open this URL to complete purchase:${c.reset}          ${c.cyan}│${c.reset}`);
+    console.log(`${c.cyan}└─────────────────────────────────────────────────┘${c.reset}`);
+    console.log();
+    console.log(`${c.green}${url}${c.reset}`);
+    console.log();
+    console.log(`${c.dim}Accepts: Cards, Apple Pay, Bank Transfer, Coinbase balance${c.reset}`);
+    console.log(`${c.dim}Fees: ~1.5% via Coinbase Onramp${c.reset}\n`);
+    
+  } catch (e: any) {
+    console.log(`${c.red}✗${c.reset} Failed to generate URL: ${e.message}\n`);
+  }
+}
+
 // Main CLI entry point
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -656,6 +723,12 @@ async function main(): Promise<void> {
     case 'address':
     case 'wallet':
       showReceive();
+      break;
+    
+    case 'fund':
+    case 'onramp':
+    case 'card':
+      await handleFund(args.slice(1));
       break;
       
     case 'send':
