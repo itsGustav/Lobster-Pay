@@ -1,0 +1,35 @@
+# Solidity contracts and libraries (not needed for npm)
+contracts/
+lib/forge-std/
+lib/openzeppelin-contracts/
+src/
+script/
+out/
+cache/
+
+# Test files
+test/
+*.t.sol
+
+# Backup files
+*.bak
+
+# Dev files
+.env*
+foundry.toml
+hardhat.config.ts
+
+# Docs (use website instead)
+docs/
+marketing/
+
+# Git
+.git/
+.gitmodules
+
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts
+node_modules/
