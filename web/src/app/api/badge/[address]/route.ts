@@ -49,6 +49,8 @@ export async function GET(
     const { address } = await params;
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'json';
+    const size = searchParams.get('size') || 'standard';
+    const theme = searchParams.get('theme') || 'dark';
 
     // Validate format parameter
     if (!['json', 'svg'].includes(format)) {
@@ -176,7 +178,7 @@ export async function GET(
 
     // SVG badge format
     if (format === 'svg') {
-      const svg = generateSVGBadge(badgeData);
+      const svg = generateSVGBadge(badgeData, size, theme);
       return new Response(svg, {
         headers: {
           'Content-Type': 'image/svg+xml',
@@ -216,30 +218,82 @@ export async function GET(
   }
 }
 
-function generateSVGBadge(data: BadgeData): string {
+function generateSVGBadge(data: BadgeData, size: string = 'standard', theme: string = 'dark'): string {
   const tierColors: Record<string, string> = {
     ELITE: '#FFD700',
-    TRUSTED: '#4CAF50',
-    EMERGING: '#2196F3',
-    NEW: '#9E9E9E',
+    EXCELLENT: '#4CAF50',
+    GOOD: '#2196F3',
+    FAIR: '#FF9800',
+    POOR: '#9E9E9E',
   };
 
-  const color = tierColors[data.tier] || tierColors.NEW;
+  const color = tierColors[data.tier] || tierColors.POOR;
 
   // Sanitize data for SVG (prevent XSS)
   const sanitizedScore = Math.max(0, Math.min(9999, data.score)); // Clamp to valid range
   const sanitizedTier = validator.escape(data.tier);
 
+  // Theme colors
+  const bgColor = theme === 'light' ? '#FFFFFF' : '#111827';
+  const textColor = theme === 'light' ? '#111827' : '#FFFFFF';
+  const mutedColor = theme === 'light' ? '#6B7280' : '#9CA3AF';
+  const borderColor = theme === 'light' ? '#E5E7EB' : '#1F2937';
+
+  // Size dimensions
+  const dimensions: Record<string, { width: number; height: number; fontSize: number }> = {
+    compact: { width: 120, height: 40, fontSize: 16 },
+    standard: { width: 200, height: 80, fontSize: 24 },
+    full: { width: 300, height: 120, fontSize: 32 },
+  };
+
+  const dim = dimensions[size] || dimensions.standard;
+
+  if (size === 'compact') {
+    return `
+      <svg width="${dim.width}" height="${dim.height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="${dim.width}" height="${dim.height}" fill="${bgColor}" stroke="${borderColor}" stroke-width="2" rx="6"/>
+        <text x="${dim.width / 2}" y="14" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${mutedColor}" text-anchor="middle">
+          🦞
+        </text>
+        <text x="${dim.width / 2}" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="${dim.fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">
+          ${sanitizedScore}
+        </text>
+      </svg>
+    `.trim();
+  }
+
+  if (size === 'full') {
+    const txCount = data.transactions || 0;
+    return `
+      <svg width="${dim.width}" height="${dim.height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="${dim.width}" height="${dim.height}" fill="${bgColor}" stroke="${borderColor}" stroke-width="2" rx="8"/>
+        <text x="${dim.width / 2}" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${mutedColor}" text-anchor="middle">
+          🦞 LOBSTER Score
+        </text>
+        <text x="${dim.width / 2}" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="${dim.fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">
+          ${sanitizedScore}
+        </text>
+        <text x="${dim.width / 2}" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${color}" text-anchor="middle" font-weight="600">
+          ★ ${sanitizedTier} ★
+        </text>
+        <text x="${dim.width / 2}" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${mutedColor}" text-anchor="middle">
+          ${txCount} transaction${txCount !== 1 ? 's' : ''}
+        </text>
+      </svg>
+    `.trim();
+  }
+
+  // Standard size
   return `
-    <svg width="200" height="80" xmlns="http://www.w3.org/2000/svg">
-      <rect width="200" height="80" fill="#111827" rx="8"/>
-      <text x="100" y="25" font-family="Arial, sans-serif" font-size="12" fill="#9CA3AF" text-anchor="middle">
+    <svg width="${dim.width}" height="${dim.height}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${dim.width}" height="${dim.height}" fill="${bgColor}" stroke="${borderColor}" stroke-width="2" rx="8"/>
+      <text x="${dim.width / 2}" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${mutedColor}" text-anchor="middle">
         🦞 LOBSTER Score
       </text>
-      <text x="100" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFFFFF" text-anchor="middle">
+      <text x="${dim.width / 2}" y="50" font-family="system-ui, -apple-system, sans-serif" font-size="${dim.fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">
         ${sanitizedScore}
       </text>
-      <text x="100" y="70" font-family="Arial, sans-serif" font-size="10" fill="${color}" text-anchor="middle">
+      <text x="${dim.width / 2}" y="70" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${color}" text-anchor="middle">
         ${sanitizedTier}
       </text>
     </svg>

@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Safe area support for iOS devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Touch-friendly minimum sizes */
+@layer utilities {
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .min-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
 @layer base {
   body {
     @apply bg-gray-950 text-gray-50 antialiased;
@@ -22,8 +46,30 @@
     animation: slideUp 0.6s ease-out forwards;
     opacity: 0;
   }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Microinteraction utilities */
+  .active\\:scale-98:active {
+    transform: scale(0.98);
+  }
+
+  .hover\\:lift:hover {
+    transform: translateY(-4px);
+  }
 }
 
+/* Keyframe Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -42,4 +88,59 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(234, 88, 12, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(234, 88, 12, 0.5);
+  }
+}
+
+/* Score celebration animation */
+@keyframes scoreIncrease {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+    color: #22c55e;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-score-increase {
+  animation: scoreIncrease 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }

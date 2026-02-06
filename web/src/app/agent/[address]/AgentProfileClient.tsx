@@ -14,6 +14,7 @@ import { ShareButtons } from '@/components/agent/ShareButtons';
 import { MutualTrust } from '@/components/agent/MutualTrust';
 import { ScoreHistory } from '@/components/ScoreHistory';
 import { PeerComparison } from '@/components/PeerComparison';
+import { VerificationBadges } from '@/components/agent/VerificationBadges';
 import { CONTRACTS, IDENTITY_ABI, REPUTATION_ABI, ESCROW_ABI } from '@/lib/contracts';
 import { 
   getTier, 
@@ -23,6 +24,7 @@ import {
   formatTimeAgo,
   type TrustVector 
 } from '@/lib/agent-utils';
+import { checkVerificationBadges } from '@/lib/badge-utils';
 
 interface AgentProfileClientProps {
   address: Address;
@@ -129,6 +131,17 @@ export function AgentProfileClient({ address }: AgentProfileClientProps) {
   // Calculate badges
   const lifetimeVolume = totalTransactions * 500; // Mock: avg $500 per tx
   const badges = calculateBadges(score, totalTransactions, lifetimeVolume, trustVector);
+  
+  // Get registration timestamp (mock for now)
+  const registeredTimestamp = Math.floor(Date.now() / 1000) - 30 * 86400; // 30 days ago
+  
+  // Check verification badges
+  const verificationBadges = checkVerificationBadges(
+    score,
+    totalTransactions,
+    lifetimeVolume,
+    registeredTimestamp
+  );
 
   // Mock transaction history
   const transactions = [
@@ -215,7 +228,12 @@ export function AgentProfileClient({ address }: AgentProfileClientProps) {
           />
         </div>
 
-        {/* Badges */}
+        {/* Verification Badges */}
+        <div className="mb-6">
+          <VerificationBadges badges={verificationBadges} />
+        </div>
+
+        {/* Legacy Badges (if any) */}
         {badges.length > 0 && (
           <div className="mb-6">
             <BadgeGrid badges={badges} />

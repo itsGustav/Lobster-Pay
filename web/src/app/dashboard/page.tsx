@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScoreGauge } from '@/components/ui/ScoreGauge';
+import { BottomNav } from '@/components/ui/BottomNav';
 import { CountUp } from '@/components/ui/CountUp';
 import { ScoreHistory } from '@/components/ScoreHistory';
 import { PeerComparison } from '@/components/PeerComparison';
@@ -20,6 +21,7 @@ import {
 } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { InfoTooltip } from '@/components/ui/Tooltip';
 import { CONTRACTS, CREDIT_ABI, CHAIN_ID } from '@/lib/contracts';
 import { useUserBalance } from '@/hooks/useUserBalance';
 import { useUserTransactions } from '@/hooks/useUserTransactions';
@@ -135,7 +137,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen py-16 md:py-24 px-4 md:px-8">
+    <div className="min-h-screen py-16 md:py-24 px-4 md:px-8 pb-24 md:pb-16">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Welcome Header */}
         <div className="animate-fade-in">
@@ -201,16 +203,24 @@ export default function DashboardPage() {
               <ScoreSkeleton />
             ) : (
               <div className="space-y-4">
-                <span className="text-base text-gray-400">LOBSTER Score</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-base text-gray-400">LOBSTER Score</span>
+                  <InfoTooltip content="Your reputation score (0-1000) based on transaction history, escrow performance, and payment reliability. Higher scores unlock better credit terms and lower fees." />
+                </div>
                 <ScoreGauge score={score} />
-                <p className="text-sm text-gray-400">
-                  {score >= 600 
-                    ? creditLimit > 0 
-                      ? `Credit limit: $${creditLimit.toLocaleString()}` 
-                      : `Credit limit: $${score}`
-                    : 'Build to 600+ for credit'
-                  }
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-gray-400">
+                    {score >= 600 
+                      ? creditLimit > 0 
+                        ? `Credit limit: $${creditLimit.toLocaleString()}` 
+                        : `Credit limit: $${score}`
+                      : 'Build to 600+ for credit'
+                    }
+                  </p>
+                  {score >= 600 && (
+                    <InfoTooltip content="Borrow capacity determined by your LOBSTER Score, collateral, and historical behavior. Build trust to increase your limit over time." />
+                  )}
+                </div>
               </div>
             )}
           </Card>
@@ -229,7 +239,9 @@ export default function DashboardPage() {
             <Link href="/escrow/new" className="block">
               <Card hover className="text-center space-y-3 cursor-pointer transition-transform hover:scale-105">
                 <div className="text-3xl">🔐</div>
-                <div className="font-medium">Escrow</div>
+                <div className="flex items-center justify-center gap-1">
+                  <div className="font-medium">Escrow</div>
+                </div>
               </Card>
             </Link>
             <Link href="/dashboard/history" className="block">
@@ -355,6 +367,11 @@ export default function DashboardPage() {
             </Card>
           )}
         </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden">
+        <BottomNav />
       </div>
     </div>
   );
