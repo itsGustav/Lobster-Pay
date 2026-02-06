@@ -173,10 +173,9 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
+            className="hero-wallet-btn"
           >
-            <div className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-semibold px-8 py-4 rounded-xl text-lg shadow-lg shadow-orange-600/30 transition-all cursor-pointer">
-              <ConnectWallet />
-            </div>
+            <ConnectWallet />
           </motion.div>
 
           <motion.p
