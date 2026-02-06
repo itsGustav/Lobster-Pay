@@ -139,7 +139,7 @@ export default function Dashboard() {
           </motion.div>
 
           <motion.h1 
-            className="text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-white via-orange-100 to-orange-200 bg-clip-text text-transparent"
+            className="text-5xl font-bold tracking-tight mb-4 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
@@ -178,9 +178,10 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="[&_button]:!bg-orange-600 [&_button]:!text-white [&_button]:!font-semibold [&_button]:!px-8 [&_button]:!py-4 [&_button]:!rounded-xl [&_button]:!text-lg [&_button]:hover:!bg-orange-500 [&_button]:!transition-all [&_button]:!shadow-lg [&_button]:!shadow-orange-600/30"
           >
-            <ConnectWallet />
+            <div className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-semibold px-8 py-4 rounded-xl text-lg shadow-lg shadow-orange-600/30 transition-all cursor-pointer">
+              <ConnectWallet />
+            </div>
           </motion.div>
 
           <motion.p
