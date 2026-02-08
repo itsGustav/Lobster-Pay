@@ -104,16 +104,16 @@ export default function DashboardPage() {
   // Auth required
   if (!isConnected && !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <Card className="max-w-md w-full text-center space-y-4 p-8">
+      <div className="min-h-screen bg-darker flex items-center justify-center px-4">
+        <Card variant="glass" className="max-w-md w-full text-center space-y-4 p-8">
           <div className="text-5xl">🦞</div>
-          <h1 className="text-2xl font-bold">Sign In Required</h1>
+          <h1 className="text-2xl font-bold text-white">Sign In Required</h1>
           <p className="text-gray-400">
             Sign in with email or connect your wallet to access your dashboard
           </p>
           <div className="flex flex-col gap-3 pt-2">
             <Link href="/login" className="block">
-              <Button size="lg" className="w-full bg-orange-600 hover:bg-orange-500">
+              <Button variant="glow" size="lg" className="w-full">
                 Sign In
               </Button>
             </Link>
@@ -137,11 +137,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen py-16 md:py-24 px-4 md:px-8 pb-24 md:pb-16">
+    <div className="min-h-screen bg-darker py-16 md:py-24 px-4 md:px-8 pb-24 md:pb-16">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Welcome Header */}
         <div className="animate-fade-in">
-          <h1 className="text-2xl md:text-4xl font-bold mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">
             {isLoadingIdentity ? (
               <Skeleton className="h-10 w-64" />
             ) : isRegistered && agentName ? (
@@ -171,9 +171,9 @@ export default function DashboardPage() {
         )}
 
         {/* Top Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Balance Card */}
-          <Card className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <Card variant="glass" className="animate-slide-up" style={{ animationDelay: '100ms' }}>
             {isLoadingBalance ? (
               <BalanceSkeleton />
             ) : balanceError ? (
@@ -198,7 +198,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* LOBSTER Score Card */}
-          <Card className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <Card variant="glass" className="animate-slide-up" style={{ animationDelay: '200ms' }}>
             {isLoadingScore || isLoadingCreditStatus ? (
               <ScoreSkeleton />
             ) : (
@@ -228,32 +228,32 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
-          <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <Link href="/dashboard/send" className="block">
-              <Card hover className="text-center space-y-3 cursor-pointer transition-transform hover:scale-105">
-                <div className="text-3xl">💸</div>
-                <div className="font-medium">Send</div>
+              <Card variant="glass" hover className="text-center space-y-2 sm:space-y-3 cursor-pointer transition-transform hover:scale-105 p-4 sm:p-6">
+                <div className="text-2xl sm:text-3xl">💸</div>
+                <div className="font-medium text-white text-sm sm:text-base">Send</div>
               </Card>
             </Link>
             <Link href="/escrow/new" className="block">
-              <Card hover className="text-center space-y-3 cursor-pointer transition-transform hover:scale-105">
-                <div className="text-3xl">🔐</div>
+              <Card variant="glass" hover className="text-center space-y-2 sm:space-y-3 cursor-pointer transition-transform hover:scale-105 p-4 sm:p-6">
+                <div className="text-2xl sm:text-3xl">🔐</div>
                 <div className="flex items-center justify-center gap-1">
-                  <div className="font-medium">Escrow</div>
+                  <div className="font-medium text-white text-sm sm:text-base">Escrow</div>
                 </div>
               </Card>
             </Link>
             <Link href="/dashboard/history" className="block">
-              <Card hover className="text-center space-y-3 cursor-pointer transition-transform hover:scale-105">
-                <div className="text-3xl">📜</div>
-                <div className="font-medium">History</div>
+              <Card variant="glass" hover className="text-center space-y-2 sm:space-y-3 cursor-pointer transition-transform hover:scale-105 p-4 sm:p-6">
+                <div className="text-2xl sm:text-3xl">📜</div>
+                <div className="font-medium text-white text-sm sm:text-base">History</div>
               </Card>
             </Link>
             <Link href="/register" className="block">
-              <Card hover className="text-center space-y-3 cursor-pointer transition-transform hover:scale-105">
-                <div className="text-3xl">🤖</div>
-                <div className="font-medium">Register</div>
+              <Card variant="glass" hover className="text-center space-y-2 sm:space-y-3 cursor-pointer transition-transform hover:scale-105 p-4 sm:p-6">
+                <div className="text-2xl sm:text-3xl">🤖</div>
+                <div className="font-medium text-white text-sm sm:text-base">Register</div>
               </Card>
             </Link>
           </div>
@@ -282,14 +282,14 @@ export default function DashboardPage() {
         {/* Recent Transactions */}
         <div className="animate-slide-up" style={{ animationDelay: '600ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Recent Transactions</h2>
+            <h2 className="text-xl font-bold text-white">Recent Transactions</h2>
             <Link href="/dashboard/history">
               <Button variant="ghost" size="sm">View All →</Button>
             </Link>
           </div>
           
           {isLoadingTransactions ? (
-            <Card className="p-0">
+            <Card variant="glass" className="p-0">
               <div className="divide-y divide-gray-800">
                 {[...Array(3)].map((_, i) => (
                   <TransactionSkeleton key={i} />
@@ -309,7 +309,7 @@ export default function DashboardPage() {
               }}
             />
           ) : (
-            <Card className="p-0 overflow-hidden">
+            <Card variant="glass" className="p-0 overflow-hidden">
               <div className="divide-y divide-gray-800">
                 {transactions.map((tx, index) => (
                   <div
@@ -320,8 +320,8 @@ export default function DashboardPage() {
                       animationFillMode: 'both',
                     }}
                   >
-                    <div className="space-y-1 flex-1">
-                      <div className="font-medium flex items-center gap-2">
+                    <div className="space-y-1 flex-1 min-w-0">
+                      <div className="font-medium text-white flex items-center gap-2 flex-wrap">
                         {tx.type}
                         {tx.status && (
                           <Badge 
@@ -353,9 +353,9 @@ export default function DashboardPage() {
                         {formatTimeAgo(tx.timestamp)}
                       </div>
                     </div>
-                    <div 
-                      className={`text-lg font-bold ${
-                        tx.amount > 0 ? 'text-green-500' : 'text-gray-50'
+                    <div
+                      className={`text-base sm:text-lg font-bold whitespace-nowrap ${
+                        tx.amount > 0 ? 'text-emerald-400' : 'text-gray-50'
                       }`}
                     >
                       {tx.amount > 0 ? '+' : ''}

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 interface NavSection {
@@ -20,27 +19,30 @@ const navigation: NavSection[] = [
     title: 'Getting Started',
     items: [
       { title: 'Quick Start', href: '#quick-start', icon: '⚡' },
-      { title: 'Installation', href: '#installation', icon: '📦' },
-      { title: 'Your First Payment', href: '#first-payment', icon: '💰' },
     ],
   },
   {
-    title: 'For Agents',
+    title: 'Commands Reference',
     items: [
-      { title: 'Accept Payments', href: '#accept-payments', icon: '🤖' },
-      { title: 'Tips & Donations', href: '#tips-donations', icon: '💝' },
-      { title: 'Escrow Services', href: '#escrow', icon: '🔒' },
-      { title: 'Building Reputation', href: '#reputation', icon: '⭐' },
+      { title: 'All Commands', href: '#commands', icon: '⌨️' },
+      { title: 'Setup Commands', href: '#setup-commands', icon: '⚙️' },
+      { title: 'Payment Commands', href: '#payment-commands', icon: '💸' },
+      { title: 'Identity & Reputation', href: '#identity-commands', icon: '🆔' },
+      { title: 'Escrow Commands', href: '#escrow-commands', icon: '🔒' },
+      { title: 'Agent-to-Agent', href: '#agent-commands', icon: '🤖' },
+      { title: 'Webhooks & Integration', href: '#webhook-commands', icon: '🪝' },
     ],
   },
   {
-    title: 'For Platforms',
+    title: 'Features',
     items: [
-      { title: 'Merchant API', href: '#merchant-api', icon: '🏢' },
-      { title: 'Payment Links', href: '#payment-links', icon: '🔗' },
-      { title: 'Checkout Widget', href: '#checkout-widget', icon: '🛒' },
-      { title: 'Subscriptions', href: '#subscriptions', icon: '🔄' },
-      { title: 'Webhooks', href: '#webhooks', icon: '🪝' },
+      { title: 'Credit Score System', href: '#credit-score-system', icon: '⭐' },
+      { title: 'x402 Payment Protocol', href: '#x402-protocol', icon: '🔐' },
+      { title: 'Badge System', href: '/docs/badges', icon: '🏆' },
+      { title: 'Embeddable Widget', href: '#checkout-widget', icon: '🛒' },
+      { title: 'Subscription Management', href: '#subscriptions', icon: '🔄' },
+      { title: 'Dispute Resolution', href: '#dispute-resolution', icon: '⚖️' },
+      { title: 'Multi-Agent Workflows', href: '#multi-agent', icon: '🔗' },
     ],
   },
   {
@@ -48,17 +50,24 @@ const navigation: NavSection[] = [
     items: [
       { title: 'Architecture', href: '#architecture', icon: '🏗️' },
       { title: 'Identity Registry', href: '#identity', icon: '🆔' },
-      { title: 'Reputation Registry', href: '#trust-score', icon: '📊' },
+      { title: 'Trust Score Contract', href: '#trust-score', icon: '📊' },
       { title: 'Credit System', href: '#credit-score', icon: '💳' },
-      { title: 'Escrow Contract', href: '#escrow-contract', icon: '⚖️' },
+      { title: 'Escrow Contract', href: '#escrow-contract', icon: '🔒' },
     ],
   },
   {
-    title: 'SDK Reference',
+    title: 'SDK & API Reference',
     items: [
       { title: 'JavaScript SDK', href: '#javascript-sdk', icon: '📚' },
       { title: 'CLI Reference', href: '#cli', icon: '⌨️' },
       { title: 'REST API', href: '#rest-api', icon: '🌐' },
+    ],
+  },
+  {
+    title: 'Security',
+    items: [
+      { title: 'Security Model', href: '#security', icon: '🛡️' },
+      { title: 'Rate Limits & Quotas', href: '#rate-limits', icon: '⏱️' },
     ],
   },
 ];
@@ -71,6 +80,7 @@ export function DocsSidebar() {
     const handleScroll = () => {
       const sections = navigation.flatMap(section => section.items);
       const current = sections.find(item => {
+        if (!item.href.startsWith('#')) return false;
         const element = document.querySelector(item.href);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -90,10 +100,12 @@ export function DocsSidebar() {
 
   const handleNavClick = (href: string) => {
     setIsMobileOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      const top = element.getBoundingClientRect().top + window.pageYOffset - 80;
-      window.scrollTo({ top, behavior: 'smooth' });
+    if (href.startsWith('#')) {
+      const element = document.querySelector(href);
+      if (element) {
+        const top = element.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
     }
   };
 
@@ -153,22 +165,32 @@ export function DocsSidebar() {
                 <ul className="space-y-1">
                   {section.items.map((item, itemIdx) => (
                     <li key={itemIdx}>
-                      <a
-                        href={item.href}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleNavClick(item.href);
-                        }}
-                        className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all",
-                          activeSection === item.href
-                            ? "bg-blue-600/10 text-blue-400 border-l-2 border-blue-600"
-                            : "text-gray-400 hover:text-gray-300 hover:bg-gray-900"
-                        )}
-                      >
-                        {item.icon && <span className="text-base">{item.icon}</span>}
-                        <span>{item.title}</span>
-                      </a>
+                      {item.href.startsWith('#') ? (
+                        <a
+                          href={item.href}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleNavClick(item.href);
+                          }}
+                          className={cn(
+                            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all",
+                            activeSection === item.href
+                              ? "bg-blue-600/10 text-blue-400 border-l-2 border-blue-600"
+                              : "text-gray-400 hover:text-gray-300 hover:bg-gray-900"
+                          )}
+                        >
+                          {item.icon && <span className="text-base">{item.icon}</span>}
+                          <span>{item.title}</span>
+                        </a>
+                      ) : (
+                        <a
+                          href={item.href}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all text-gray-400 hover:text-gray-300 hover:bg-gray-900"
+                        >
+                          {item.icon && <span className="text-base">{item.icon}</span>}
+                          <span>{item.title}</span>
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>

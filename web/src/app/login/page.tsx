@@ -47,13 +47,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-darker flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
+          <Link href="/" className="inline-flex items-center gap-3">
             <span className="text-4xl">🦞</span>
-            <span className="text-2xl font-bold">Pay Lobster</span>
+            <span className="text-2xl font-bold text-white">Pay Lobster</span>
           </Link>
         </div>
 
@@ -61,7 +61,7 @@ export default function LoginPage() {
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold">Welcome Back</h1>
+              <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
               <p className="text-gray-400">Sign in to your account</p>
             </div>
 
@@ -91,7 +91,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-sm text-blue-500 hover:text-blue-400"
+                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     Forgot password?
                   </button>
@@ -117,8 +117,9 @@ export default function LoginPage() {
               {/* Submit Button */}
               <Button
                 type="submit"
+                variant="glow"
                 size="lg"
-                className="w-full bg-blue-600 hover:bg-blue-500"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -150,7 +151,7 @@ export default function LoginPage() {
             {/* Sign Up Link */}
             <div className="text-center text-sm text-gray-400">
               Don't have an account?{' '}
-              <Link href="/signup" className="text-blue-500 hover:text-blue-400 font-medium">
+              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
                 Sign Up
               </Link>
             </div>

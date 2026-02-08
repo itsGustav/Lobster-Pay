@@ -83,8 +83,9 @@ export default function SignInPage() {
           {/* Submit Button */}
           <Button
             type="submit"
+            variant="glow"
             size="lg"
-            className="w-full bg-orange-600 hover:bg-orange-700"
+            className="w-full"
             disabled={isLoading}
           >
             {isLoading ? 'Sending...' : 'Send Sign-In Link'}
@@ -118,7 +119,7 @@ export default function SignInPage() {
         {/* Sign Up Link */}
         <div className="text-center text-sm text-gray-400">
           Don't have an account?{' '}
-          <Link href="/auth/signup" className="text-orange-600 hover:text-orange-500 font-medium">
+          <Link href="/auth/signup" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
             Sign Up
           </Link>
         </div>

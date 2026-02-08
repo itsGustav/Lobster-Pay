@@ -3,13 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-const ConnectButton = dynamic(
-  () => import('@rainbow-me/rainbowkit').then((mod) => mod.ConnectButton),
-  { ssr: false }
-);
-
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/dashboard', label: 'Dashboard' },
@@ -51,8 +44,17 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-800">
-            <span className="text-xl font-bold flex items-center gap-2">
-              <span className="text-2xl">🦞</span>
+            <span className="text-xl font-bold flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 48 48" fill="none" className="text-white">
+                  <g fill="currentColor">
+                    <path d="M14 19c-1.5-2.5-5-4.5-7.5-3s-1.5 5.5 1 7l6.5-1.5" opacity="0.9"/>
+                    <path d="M34 19c1.5-2.5 5-4.5 7.5-3s1.5 5.5-1 7l-6.5-1.5" opacity="0.9"/>
+                    <ellipse cx="24" cy="26" rx="9" ry="11"/>
+                    <path d="M19 37l5 7 5-7" opacity="0.8"/>
+                  </g>
+                </svg>
+              </div>
               Pay Lobster
             </span>
             <button
@@ -77,7 +79,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   onClick={onClose}
                   className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors min-h-touch ${
                     isActive
-                      ? 'bg-orange-600/20 text-orange-600'
+                      ? 'bg-blue-600/20 text-blue-400'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-gray-50'
                   }`}
                 >
@@ -87,9 +89,15 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             })}
           </nav>
 
-          {/* Footer - Connect Wallet */}
+          {/* Footer */}
           <div className="p-4 border-t border-gray-800">
-            <ConnectButton showBalance={false} chainStatus="icon" />
+            <Link
+              href="/signup"
+              onClick={onClose}
+              className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
+            >
+              Sign Up Free
+            </Link>
           </div>
         </div>
       </div>
