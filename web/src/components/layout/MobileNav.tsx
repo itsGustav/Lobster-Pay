@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/dashboard', label: 'Dashboard' },
@@ -17,6 +18,8 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading, signOut } = useAuth();
 
   useEffect(() => {
     if (isOpen) {
@@ -91,13 +94,22 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
           {/* Footer */}
           <div className="p-4 border-t border-gray-800">
-            <Link
-              href="/signup"
-              onClick={onClose}
-              className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
-            >
-              Sign Up Free
-            </Link>
+            {!loading && !user ? (
+              <Link
+                href="/signup"
+                onClick={onClose}
+                className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all"
+              >
+                Sign Up Free
+              </Link>
+            ) : !loading && user ? (
+              <button
+                onClick={async () => { await signOut(); onClose(); router.push('/'); }}
+                className="block w-full text-center px-4 py-3 text-sm font-medium text-gray-400 border border-white/10 rounded-lg hover:bg-white/5 transition-all"
+              >
+                Sign Out
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

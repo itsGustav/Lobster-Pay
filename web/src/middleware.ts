@@ -1,24 +1,12 @@
-// Middleware now uses JWT sessions (Edge Runtime compatible)
-// Database sessions are still used for API routes via auth-server.ts
+// Middleware disabled - Firebase auth is client-side
+// Protected routes are handled by individual pages checking useAuth()
 
-import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl
-  const isLoggedIn = !!req.auth
-
-  // Protect dashboard and other authenticated routes
-  const protectedRoutes = ['/dashboard', '/settings', '/history', '/credit', '/analytics']
-  const isProtected = protectedRoutes.some(route => pathname.startsWith(route))
-  
-  if (isProtected && !isLoggedIn) {
-    const callbackUrl = encodeURIComponent(pathname)
-    return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${callbackUrl}`, req.url))
-  }
-
+export function middleware(request: NextRequest) {
   return NextResponse.next()
-})
+}
 
 export const config = {
   matcher: [

@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useReadContract, useBalance } from 'wagmi';
 import { useAuth } from '@/contexts/AuthContext';
+import { updateUserWallet } from '@/lib/firebase-client';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -32,6 +34,15 @@ export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const { user, loading } = useAuth();
 
+  // Get ETH balance
+  const { 
+    data: ethBalance, 
+    isLoading: isLoadingEth 
+  } = useBalance({
+    address,
+    chainId: CHAIN_ID,
+  });
+
   // Fetch user data
   const {
     balance,
@@ -40,6 +51,13 @@ export default function DashboardPage() {
     error: balanceError,
     refetch: refetchBalance,
   } = useUserBalance(address);
+
+  // Update wallet address in Firestore when connected
+  useEffect(() => {
+    if (user && address && isConnected) {
+      updateUserWallet(user.uid, address).catch(console.error);
+    }
+  }, [user, address, isConnected]);
 
   const {
     transactions,
@@ -174,7 +192,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Balance Card */}
           <Card variant="glass" className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-            {isLoadingBalance ? (
+            {isLoadingBalance || isLoadingEth ? (
               <BalanceSkeleton />
             ) : balanceError ? (
               <ErrorState error={balanceError} onRetry={refetchBalance} />
@@ -184,15 +202,24 @@ export default function DashboardPage() {
                   <span className="text-base text-gray-400">Total Balance</span>
                   <Badge variant="success">Active</Badge>
                 </div>
-                <div className="text-4xl md:text-5xl font-bold">
-                  <CountUp 
-                    end={balance} 
-                    decimals={2} 
-                    prefix="$" 
-                    duration={1200}
-                  />
+                <div className="space-y-2">
+                  <div className="text-4xl md:text-5xl font-bold">
+                    <CountUp 
+                      end={balance} 
+                      decimals={2} 
+                      prefix="$" 
+                      duration={1200}
+                    />
+                  </div>
+                  <p className="text-sm text-gray-400">USDC on Base</p>
+                  {ethBalance && Number(ethBalance.formatted) > 0 && (
+                    <div className="pt-2 border-t border-gray-800">
+                      <p className="text-sm text-gray-400">
+                        {Number(ethBalance.formatted).toFixed(4)} ETH
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-gray-400">USDC on Base</p>
               </div>
             )}
           </Card>

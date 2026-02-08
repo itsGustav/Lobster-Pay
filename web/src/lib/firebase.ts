@@ -7,7 +7,7 @@ export function initAdmin() {
     // In production, use service account credentials
     // For now, using default credentials (requires GOOGLE_APPLICATION_CREDENTIALS env var)
     initializeApp({
-      projectId: 'agent-pay-hq',
+      projectId: 'paylobster',
     });
   }
   return getFirestore();

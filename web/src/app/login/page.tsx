@@ -10,12 +10,16 @@ import { Input } from '@/components/ui/Input';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { signIn, resetPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +50,32 @@ export default function LoginPage() {
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError('');
+
+    if (!resetEmail) {
+      setResetError('Please enter your email');
+      return;
+    }
+
+    setResetLoading(true);
+
+    try {
+      await resetPassword(resetEmail);
+      setResetSent(true);
+    } catch (err: any) {
+      console.error('Reset password error:', err);
+      if (err.code === 'auth/user-not-found') {
+        setResetError('No account found with this email');
+      } else {
+        setResetError('Failed to send reset email. Please try again.');
+      }
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-darker flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -61,12 +91,90 @@ export default function LoginPage() {
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-              <p className="text-gray-400">Sign in to your account</p>
+              <h1 className="text-2xl font-bold text-white">
+                {showForgotPassword ? 'Reset Password' : 'Welcome Back'}
+              </h1>
+              <p className="text-gray-400">
+                {showForgotPassword 
+                  ? 'Enter your email to receive a reset link'
+                  : 'Sign in to your account'
+                }
+              </p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Forgot Password Form */}
+            {showForgotPassword ? (
+              resetSent ? (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm text-center">
+                    ✓ Check your email for a reset link
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setResetSent(false);
+                      setResetEmail('');
+                    }}
+                  >
+                    Back to Sign In
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="reset-email" className="block text-sm font-medium">
+                      Email
+                    </label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      disabled={resetLoading}
+                      required
+                      autoFocus
+                    />
+                  </div>
+
+                  {resetError && (
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                      {resetError}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <Button
+                      type="submit"
+                      variant="glow"
+                      size="lg"
+                      className="w-full"
+                      disabled={resetLoading}
+                    >
+                      {resetLoading ? 'Sending...' : 'Send Reset Link'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="lg"
+                      className="w-full"
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setResetEmail('');
+                        setResetError('');
+                      }}
+                    >
+                      Back to Sign In
+                    </Button>
+                  </div>
+                </form>
+              )
+            ) : (
+              /* Sign In Form */
+              <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium">
                   Email
@@ -133,28 +241,19 @@ export default function LoginPage() {
                 ) : 'Sign In'}
               </Button>
             </form>
+            )}
 
-            {/* Divider */}
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-gray-800" />
-              <span className="text-gray-500 text-sm">or</span>
-              <div className="flex-1 h-px bg-gray-800" />
-            </div>
-
-            {/* Magic Link Option */}
-            <Link href="/auth/signin" className="block">
-              <Button variant="outline" size="lg" className="w-full">
-                Sign in with Magic Link
-              </Button>
-            </Link>
-
-            {/* Sign Up Link */}
-            <div className="text-center text-sm text-gray-400">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                Sign Up
-              </Link>
-            </div>
+            {!showForgotPassword && (
+              <>
+                {/* Sign Up Link */}
+                <div className="text-center text-sm text-gray-400">
+                  Don't have an account?{' '}
+                  <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                    Sign Up
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </Card>
       </div>

@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { BlueLobster } from '@/components/BlueLobster';
 import { MobileNav } from './MobileNav';
+import { useAuth } from '@/contexts/AuthContext';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -17,6 +19,8 @@ export function Header() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -65,15 +69,33 @@ export function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <Link href="/login" className="hidden md:inline-flex text-sm text-gray-400 hover:text-white transition-colors px-3 py-2">
-                Log In
-              </Link>
-              <Link
-                href="/signup"
-                className="hidden md:inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all hover:shadow-glow-blue"
-              >
-                Sign Up Free
-              </Link>
+              {!loading && !user && (
+                <>
+                  <Link href="/login" className="hidden md:inline-flex text-sm text-gray-400 hover:text-white transition-colors px-3 py-2">
+                    Log In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="hidden md:inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-all hover:shadow-glow-blue"
+                  >
+                    Sign Up Free
+                  </Link>
+                </>
+              )}
+              {!loading && user && (
+                <>
+                  <Link href="/dashboard" className="hidden md:inline-flex text-sm text-gray-400 hover:text-white transition-colors px-3 py-2">
+                    Dashboard
+                  </Link>
+                  <div className="hidden md:block">
+                    <ConnectButton 
+                      accountStatus="avatar"
+                      chainStatus="icon"
+                      showBalance={false}
+                    />
+                  </div>
+                </>
+              )}
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileNavOpen(true)}
