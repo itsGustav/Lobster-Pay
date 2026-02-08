@@ -47,19 +47,47 @@ export default function PaymentPage() {
   const { isLoading: isConfirming, isSuccess: isConfirmed } = 
     useWaitForTransactionReceipt({ hash });
   
-  // Fetch payment link data
+  // Fetch payment link data from Firestore
   useEffect(() => {
     async function fetchPaymentLink() {
       try {
         setLoading(true);
-        const response = await fetch(`/api/v1/payment-links/${linkId}`);
         
-        if (!response.ok) {
+        // Import Firestore functions dynamically
+        const { db } = await import('@/lib/firebase-client');
+        const { collection, query, where, getDocs } = await import('firebase/firestore');
+        
+        const q = query(
+          collection(db, 'paymentLinks'),
+          where('linkId', '==', linkId)
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
           throw new Error('Payment link not found');
         }
         
-        const data = await response.json();
-        setPaymentLink(data);
+        const doc = snapshot.docs[0];
+        const data = doc.data();
+        
+        // Transform Firestore data to expected format
+        setPaymentLink({
+          link_id: doc.id,
+          amount: data.amount,
+          description: data.description,
+          status: data.status,
+          paid_at: data.paidAt?.toDate?.()?.toISOString() || null,
+          tx_hash: data.txHash || null,
+          created_at: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+          expires_at: data.expiresAt?.toDate?.()?.toISOString() || '',
+          redirect_url: data.redirectUrl || '/',
+          merchant: {
+            name: data.merchantName || 'PayLobster Merchant',
+            website: data.merchantWebsite || window.location.origin,
+            wallet_address: data.recipientWallet,
+          },
+        });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load payment link');
       } finally {
@@ -72,16 +100,23 @@ export default function PaymentPage() {
   
   // Handle successful payment
   useEffect(() => {
-    if (isConfirmed && hash) {
-      // Update payment link status
-      fetch(`/api/v1/payment-links/${linkId}/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          paid_by: address,
-          tx_hash: hash,
-        }),
-      }).catch(console.error);
+    if (isConfirmed && hash && paymentLink) {
+      // Update payment link status in Firestore
+      (async () => {
+        try {
+          const { db } = await import('@/lib/firebase-client');
+          const { doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+          
+          await updateDoc(doc(db, 'paymentLinks', paymentLink.link_id), {
+            status: 'paid',
+            paidBy: address,
+            txHash: hash,
+            paidAt: serverTimestamp(),
+          });
+        } catch (err) {
+          console.error('Failed to update payment status:', err);
+        }
+      })();
       
       // Redirect after 2 seconds
       setTimeout(() => {
@@ -90,7 +125,7 @@ export default function PaymentPage() {
         }
       }, 2000);
     }
-  }, [isConfirmed, hash, linkId, address, paymentLink]);
+  }, [isConfirmed, hash, address, paymentLink]);
   
   // Handle payment
   const handlePay = async () => {

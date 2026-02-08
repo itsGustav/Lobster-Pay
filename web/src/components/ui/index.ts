@@ -16,3 +16,5 @@ export * from './BottomNav';
 export { AnimatedNumber } from './AnimatedNumber';
 export * from './AmountInput';
 export * from './ActionButton';
+export * from './SparkleEffect';
+export * from './AnimatedTrustBar';

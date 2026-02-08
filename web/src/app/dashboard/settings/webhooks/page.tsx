@@ -53,18 +53,29 @@ export default function WebhooksPage() {
   }, [user]);
 
   const loadWebhooks = async () => {
+    if (!user) return;
+    
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/webhooks');
+      const { db } = await import('@/lib/firebase-client');
+      const { collection, query, where, getDocs } = await import('firebase/firestore');
       
-      if (!response.ok) {
-        throw new Error('Failed to load webhooks');
-      }
+      const q = query(
+        collection(db, 'webhooks'),
+        where('userId', '==', user.uid)
+      );
       
-      const data = await response.json();
-      setWebhooks(data.webhooks || []);
+      const snapshot = await getDocs(q);
+      const webhooksData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        lastTriggered: doc.data().lastTriggered?.toDate?.()?.toISOString() || null,
+      })) as Webhook[];
+      
+      setWebhooks(webhooksData);
     } catch (err) {
       console.error('Error loading webhooks:', err);
       setError(err instanceof Error ? err : new Error('Failed to load webhooks'));
@@ -81,24 +92,35 @@ export default function WebhooksPage() {
       return;
     }
 
+    if (!user) {
+      setFormError('You must be signed in');
+      return;
+    }
+
     try {
       setFormSubmitting(true);
       setFormError(null);
       
-      const response = await fetch('/api/webhooks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: formUrl,
-          events: formEvents,
-          description: formDescription,
-        }),
-      });
+      const { db } = await import('@/lib/firebase-client');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
       
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to create webhook');
-      }
+      // Generate webhook secret (browser-compatible)
+      const array = new Uint8Array(32);
+      crypto.getRandomValues(array);
+      const secret = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+      
+      await addDoc(collection(db, 'webhooks'), {
+        userId: user.uid,
+        url: formUrl,
+        events: formEvents,
+        description: formDescription,
+        secret,
+        active: true,
+        createdAt: serverTimestamp(),
+        lastTriggered: null,
+        triggerCount: 0,
+        failureCount: 0,
+      });
       
       // Reset form
       setFormUrl('');
@@ -122,14 +144,10 @@ export default function WebhooksPage() {
     }
 
     try {
-      const response = await fetch(`/api/webhooks?id=${webhookId}`, {
-        method: 'DELETE',
-      });
+      const { db } = await import('@/lib/firebase-client');
+      const { doc, deleteDoc } = await import('firebase/firestore');
       
-      if (!response.ok) {
-        throw new Error('Failed to delete webhook');
-      }
-      
+      await deleteDoc(doc(db, 'webhooks', webhookId));
       await loadWebhooks();
     } catch (err) {
       console.error('Error deleting webhook:', err);
@@ -141,10 +159,20 @@ export default function WebhooksPage() {
     try {
       setTesting(webhookId);
       
+      const webhook = webhooks.find(w => w.id === webhookId);
+      if (!webhook) {
+        alert('Webhook not found');
+        return;
+      }
+      
       const response = await fetch('/api/webhooks/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhookId }),
+        body: JSON.stringify({
+          webhookId,
+          url: webhook.url,
+          secret: webhook.secret,
+        }),
       });
       
       const data = await response.json();
